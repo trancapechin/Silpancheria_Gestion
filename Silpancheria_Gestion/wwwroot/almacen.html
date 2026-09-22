@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Almacén & Compras - Silpanchería</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #fff;
+        }
+
+        .card-dark {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+        <div>
+            <h3 class="fw-bold mb-0 text-primary"><i class="bi bi-truck me-2"></i>Encargado de Compras / Almacén</h3>
+            <span class="text-secondary small" id="lblUsuario">Cargando...</span>
+        </div>
+        <button onclick="cerrarSesion()" class="btn btn-outline-danger btn-sm"><i class="bi bi-power"></i> Salir</button>
+    </div>
+
+    <div class="row g-4">
+        <!-- REGISTRO DE ENTRADA / COMPRA -->
+        <div class="col-md-6">
+            <div class="card-dark p-3">
+                <h5 class="fw-bold text-success"><i class="bi bi-box-arrow-in-down me-2"></i>Registrar Entrada de Mercadería</h5>
+                <form onsubmit="registrarCompra(event)">
+                    <div class="mb-3">
+                        <label class="form-label small">Insumo / Producto</label>
+                        <input type="text" id="compraInsumo" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Carne de Res, Cajas de Soda" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label small">Cantidad Ingresada</label>
+                            <input type="number" step="0.01" id="compraCantidad" class="form-control bg-dark text-white border-secondary" required placeholder="Ej: 50">
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label small">Precio Costo Total (Bs.)</label>
+                            <input type="number" step="0.01" id="compraCosto" class="form-control bg-dark text-white border-secondary" required placeholder="Ej: 350">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar Entrada en Stock</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- CONTEO FÍSICO / INVENTARIO CÍCLICO -->
+        <div class="col-md-6">
+            <div class="card-dark p-3">
+                <h5 class="fw-bold text-warning"><i class="bi bi-clipboard-check me-2"></i>Ajuste de Stock Inicial / Conteo Físico</h5>
+                <form onsubmit="ajustarStock(event)">
+                    <div class="mb-3">
+                        <label class="form-label small">Producto a Ajustar</label>
+                        <select id="ajusteProducto" class="form-select bg-dark text-white border-secondary">
+                            <option value="Carne de Res">Carne de Res</option>
+                            <option value="Papa">Papa</option>
+                            <option value="Soda 2L">Soda 2 Litros</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Nueva Cantidad Real Contada</label>
+                        <input type="number" step="0.01" id="ajusteCantidad" class="form-control bg-dark text-white border-secondary" required placeholder="Ej: 22.5">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 fw-bold text-dark">Actualizar Conteo Físico</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const user = JSON.parse(localStorage.getItem('usuarioActivo'));
+    if (!user) window.location.href = 'index.html';
+    document.getElementById('lblUsuario').innerText = `Usuario: ${user.usuario} (${user.rol})`;
+
+    function registrarCompra(e) {
+      e.preventDefault();
+      alert('Entrada de mercadería guardada exitosamente.');
+      e.target.reset();
+    }
+
+    function ajustarStock(e) {
+      e.preventDefault();
+      alert('Stock corregido con base en el conteo físico.');
+      e.target.reset();
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('usuarioActivo');
+      window.location.href = 'index.html';
+    }
+    </script>
+</body>
+</html>

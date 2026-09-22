@@ -1,734 +1,1041 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Silpanchería Gestión - Dashboard de Administración</title>
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap 5.3 CSS -->
+    <title>Sistema de Gestión - Silpanchería POS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- LIBRERÍAS PARA GENERAR PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --bg-sidebar: #0f172a;
-            --accent-color: #f59e0b;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-hover: #334155;
+            --accent-yellow: #f59e0b;
             --accent-hover: #d97706;
-            --border-color: #334155;
-            --text-muted: #94a3b8;
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1;
+            --border-color: #475569;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
-            color: #f8fafc;
-            overflow-x: hidden;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--border-color);
-            transition: all 0.3s ease;
         }
 
-        .brand-logo {
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            border-radius: 10px;
+        /* PANTALLA LOGIN */
+        .login-container {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
         }
 
-        .nav-link {
-            color: var(--text-muted);
-            border-radius: 8px;
-            padding: 10px 16px;
-            margin-bottom: 4px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s ease;
-        }
-
-            .nav-link:hover {
-                color: #ffffff;
-                background-color: rgba(255, 255, 255, 0.05);
-            }
-
-            .nav-link.active {
-                color: #ffffff;
-                background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), transparent);
-                border-left: 3px solid var(--accent-color);
-            }
-
-        /* Top Navbar */
-        .top-navbar {
-            background-color: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        /* Cards & Stats */
-        .stat-card {
-            background-color: var(--bg-card);
+        .login-card {
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-            .stat-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-        }
-
-        .stat-amber {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-        }
-
-        .stat-emerald {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-        }
-
-        .stat-blue {
-            background: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
-        }
-
-        .stat-purple {
-            background: rgba(168, 85, 247, 0.15);
-            color: #a855f7;
-        }
-
-        /* Tables */
-        .custom-table-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .table {
-            margin-bottom: 0;
-            color: #e2e8f0;
-        }
-
-            .table thead th {
-                background-color: #0f172a;
-                color: var(--text-muted);
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                border-bottom: 1px solid var(--border-color);
-                padding: 14px 18px;
-            }
-
-            .table tbody td {
-                border-bottom: 1px solid var(--border-color);
-                padding: 14px 18px;
-                vertical-align: middle;
-            }
-
-            .table tbody tr:hover {
-                background-color: rgba(255, 255, 255, 0.02);
-            }
-
-        /* Status Badges */
-        .badge-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-pending {
-            background-color: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .badge-completed {
-            background-color: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .badge-info {
-            background-color: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        /* Buttons */
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            border: none;
-            color: white;
-            font-weight: 500;
-            padding: 8px 18px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-            .btn-primary-custom:hover {
-                background: linear-gradient(135deg, #d97706, #b45309);
-                color: white;
-                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-            }
-
-        /* Modal styling */
-        .modal-content {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: #f8fafc;
-        }
-
-        .modal-header {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-footer {
-            border-top: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
 
         .form-control, .form-select {
-            background-color: #0f172a;
-            border: 1px solid var(--border-color);
-            color: #f8fafc;
-            border-radius: 8px;
+            background-color: #0f172a !important;
+            color: #ffffff !important;
+            border-color: var(--border-color) !important;
         }
 
             .form-control:focus, .form-select:focus {
-                background-color: #0f172a;
-                border-color: var(--accent-color);
-                color: #f8fafc;
-                box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25);
+                border-color: var(--accent-yellow) !important;
+                box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25) !important;
+            }
+
+        /* COMPONENTES GENERALES */
+        .card-dark {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .nav-pills .nav-link {
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+            .nav-pills .nav-link:hover {
+                background-color: var(--card-hover);
+                color: #ffffff;
+            }
+
+            .nav-pills .nav-link.active {
+                background-color: var(--accent-yellow);
+                color: #000000;
+            }
+
+        /* PRODUCTOS POS */
+        .pos-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .pos-card:hover {
+                background-color: var(--card-hover);
+                border-color: var(--accent-yellow);
+                transform: translateY(-2px);
+            }
+
+        .pos-card-title {
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .pos-card-price {
+            color: var(--accent-yellow) !important;
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+
+        /* TABLAS ALTO CONTRASTE */
+        .table-dark {
+            --bs-table-bg: #1e293b;
+            --bs-table-striped-bg: #182232;
+            --bs-table-hover-bg: #334155;
+            color: #ffffff !important;
+            border-color: var(--border-color);
+        }
+
+            .table-dark th {
+                color: #f8fafc !important;
+                font-weight: 700;
+                border-bottom: 2px solid var(--border-color);
+            }
+
+            .table-dark td {
+                color: #cbd5e1 !important;
+            }
+
+        .text-secondary, .text-muted {
+            color: #cbd5e1 !important;
+        }
+
+        .btn-warning {
+            background-color: var(--accent-yellow);
+            border-color: var(--accent-yellow);
+            color: #000;
+            font-weight: 700;
+        }
+
+            .btn-warning:hover {
+                background-color: var(--accent-hover);
+                border-color: var(--accent-hover);
+                color: #000;
             }
     </style>
 </head>
 <body>
 
-    <div class="container-fluid p-0">
-        <div class="row g-0">
-
-            <!-- Sidebar -->
-            <aside class="col-lg-2 sidebar d-none d-lg-block p-3">
-                <div class="brand-logo mb-4 px-2">
-                    <div class="brand-icon"><i class="bi bi-shop"></i></div>
-                    <div>
-                        <span>Silpanchería</span>
-                        <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 400;">Gestión v1.0 Admin</div>
-                    </div>
-                </div>
-
-                <div class="small text-uppercase text-muted fw-bold px-2 mb-2" style="font-size: 0.65rem;">Menú Principal</div>
-                <ul class="nav flex-column mb-4">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active" onclick="switchSection('compras', event)">
-                            <i class="bi bi-cart-check"></i> Compras
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="switchSection('detalle', event)">
-                            <i class="bi bi-receipt"></i> Detalle Compra
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="switchSection('stock', event)">
-                            <i class="bi bi-box-seam"></i> Movimientos Stock
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="small text-uppercase text-muted fw-bold px-2 mb-2" style="font-size: 0.65rem;">Sistema</div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="/swagger/index.html" target="_blank" class="nav-link">
-                            <i class="bi bi-code-slash"></i> API Swagger Docs
-                        </a>
-                    </li>
-                </ul>
-            </aside>
-
-            <!-- Main Content Area -->
-            <div class="col-lg-10 col-12 ms-auto">
-
-                <!-- Top Navbar -->
-                <header class="top-navbar sticky-top px-4 py-3 d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                            <i class="bi bi-list"></i>
-                        </button>
-                        <div class="input-group search-bar d-none d-md-flex" style="width: 280px;">
-                            <span class="input-group-text bg-transparent border-end-0 text-muted border-secondary"><i class="bi bi-search"></i></span>
-                            <input type="text" id="searchInput" class="form-control border-start-0 border-secondary" placeholder="Buscar registros..." onkeyup="filterTable()">
-                        </div>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-3">
-                        <button class="btn btn-outline-secondary position-relative btn-sm rounded-circle p-2">
-                            <i class="bi bi-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                        </button>
-                        <div class="vr bg-secondary"></div>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-warning text-dark fw-bold d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                AD
-                            </div>
-                            <div class="d-none d-sm-block">
-                                <div class="fw-semibold small">Administrador</div>
-                                <div class="text-muted small" style="font-size: 0.75rem;">admin@silpancheria.com</div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-
-                <!-- Main Container Body -->
-                <main class="p-4">
-
-                    <!-- Stats Row -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-3 col-sm-6">
-                            <div class="stat-card d-flex align-items-center gap-3">
-                                <div class="stat-icon stat-amber"><i class="bi bi-cart-plus"></i></div>
-                                <div>
-                                    <div class="text-muted small">Total Compras</div>
-                                    <div class="fs-4 fw-bold" id="kpiTotalCompras">--</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <div class="stat-card d-flex align-items-center gap-3">
-                                <div class="stat-icon stat-emerald"><i class="bi bi-check2-circle"></i></div>
-                                <div>
-                                    <div class="text-muted small">Compras Confirmadas</div>
-                                    <div class="fs-4 fw-bold" id="kpiConfirmadas">--</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <div class="stat-card d-flex align-items-center gap-3">
-                                <div class="stat-icon stat-blue"><i class="bi bi-box"></i></div>
-                                <div>
-                                    <div class="text-muted small">Movimientos Stock</div>
-                                    <div class="fs-4 fw-bold" id="kpiStock">--</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6">
-                            <div class="stat-card d-flex align-items-center gap-3">
-                                <div class="stat-icon stat-purple"><i class="bi bi-currency-dollar"></i></div>
-                                <div>
-                                    <div class="text-muted small">Inversión Estimada</div>
-                                    <div class="fs-4 fw-bold" id="kpiInversion">Bs. 0.00</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Header Actions -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h4 class="fw-bold mb-0" id="sectionTitle">Gestión de Compras</h4>
-                            <p class="text-muted small mb-0" id="sectionSubtitle">Administra y confirma las compras realizadas al inventario</p>
-                        </div>
-                        <button class="btn btn-primary-custom" id="btnAddNew" onclick="openAddModal()">
-                            <i class="bi bi-plus-lg me-1"></i> <span id="btnAddNewText">Nueva Compra</span>
-                        </button>
-                    </div>
-
-                    <!-- Main Data Table -->
-                    <div class="custom-table-card shadow-sm">
-                        <div class="table-responsive">
-                            <table class="table" id="mainDataTable">
-                                <thead>
-                                    <tr id="tableHeaders">
-                                        <!-- Generated via JS -->
-                                    </tr>
-                                </thead>
-                                <tbody id="tableBody">
-                                    <!-- Generated via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </main>
+    <!-- PANTALLA LOGIN -->
+    <div id="pantallaLogin" class="login-container">
+        <div class="login-card">
+            <div class="text-center mb-4">
+                <i class="bi bi-shop text-warning display-4"></i>
+                <h3 class="fw-bold mt-2 text-white">Silpanchería POS</h3>
+                <p class="text-secondary small">Ingrese sus credenciales para ingresar</p>
             </div>
-        </div>
-    </div>
 
-    <!-- Modal Generico para Agregar Registros -->
-    <div class="modal fade" id="crudModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="modalTitle">Agregar Registro</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div id="errorLogin" class="alert alert-danger d-none py-2 text-center small fw-semibold">
+                Usuario o contraseña incorrectos.
+            </div>
+
+            <form onsubmit="ejecutarLogin(event)">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-white">Usuario</label>
+                    <input type="text" id="txtUsuario" class="form-control" required placeholder="Ej: admin, chef, cajero">
                 </div>
-                <div class="modal-body" id="modalBody">
-                    <!-- Form elements inserted via JS -->
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-white">Contraseña</label>
+                    <input type="password" id="txtPassword" class="form-control" required placeholder="••••••••">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary-custom" onclick="submitModalForm()">Guardar Registro</button>
+                <button type="submit" class="btn btn-warning w-100 py-2 fs-6">Iniciar Sesión</button>
+            </form>
+
+            <hr class="my-4 border-secondary">
+
+            <div class="small">
+                <span class="text-white d-block mb-2 fw-bold">Accesos rápidos de prueba:</span>
+                <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('admin','123')">Admin</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('chef','123')">Cocina</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('cajero','123')">Cajero</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('almacen','123')">Almacén</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('auditor','123')">Auditor</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- SISTEMA PRINCIPAL -->
+    <div id="pantallaSistema" class="d-none">
+        <!-- ENCABEZADO PRINCIPAL -->
+        <header class="navbar navbar-dark bg-dark px-4 py-3 border-bottom border-secondary">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shop text-warning fs-3"></i>
+                <span class="fs-4 fw-bold text-white tracking-wide">SILPANCHERÍA POS</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div id="lblNombreUsuario" class="fw-bold text-white">Kevin Jiménez</div>
+                    <span id="lblRolBadge" class="badge bg-warning text-dark">ADMINISTRADOR</span>
+                </div>
+                <button onclick="cerrarSesion()" class="btn btn-outline-danger btn-sm px-3 fw-bold">
+                    <i class="bi bi-box-arrow-right me-1"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <div class="container-fluid p-4">
+            <!-- NAVEGACIÓN -->
+            <ul class="nav nav-pills mb-4 gap-2 border-bottom border-secondary pb-3" id="mainNav">
+                <li class="nav-item">
+                    <button class="nav-link active" id="tab-pos" onclick="cambiarModulo('pos')">
+                        <i class="bi bi-calculator me-2"></i>POS / Ventas
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-inventario" onclick="cambiarModulo('inventario')">
+                        <i class="bi bi-box-seam me-2"></i>Inventario de Insumos
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-mermas" onclick="cambiarModulo('mermas')">
+                        <i class="bi bi-trash me-2"></i>Mermas y Pérdidas
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-reportes" onclick="cambiarModulo('reportes')">
+                        <i class="bi bi-graph-up-arrow me-2"></i>Reportes y Métricas
+                    </button>
+                </li>
+                <li class="nav-item" id="li-usuarios">
+                    <button class="nav-link" id="tab-usuarios" onclick="cambiarModulo('usuarios')">
+                        <i class="bi bi-people me-2"></i>Usuarios y Roles
+                    </button>
+                </li>
+            </ul>
+
+            <!-- ALERTA DE SOLO LECTURA (PARA AUDITOR) -->
+            <div id="alertaSoloLectura" class="alert alert-info d-none d-flex align-items-center mb-4" role="alert">
+                <i class="bi bi-shield-lock-fill fs-4 me-3 text-info"></i>
+                <div>
+                    <strong class="text-white">Modo de Auditoría / Solo Lectura:</strong>
+                    <span class="text-white">Tiene acceso completo a la información pero no puede realizar ni modificar registros.</span>
+                </div>
+            </div>
+
+            <!-- MÓDULO 1: POS / VENTAS -->
+            <div id="sec-pos" class="modulo-seccion">
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <h5 class="fw-bold mb-3 text-warning"><i class="bi bi-shop me-2"></i>Menú Principal</h5>
+                        <div class="row g-3" id="gridProductos">
+                            <!-- Carga dinámicamente -->
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold border-bottom border-secondary pb-2 text-warning"><i class="bi bi-cart-check me-2"></i>Orden Actual</h5>
+                            <div class="table-responsive" style="min-height: 200px;">
+                                <table class="table table-dark table-sm align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th class="text-center">Cant</th>
+                                            <th class="text-end">Subtotal</th>
+                                            <th class="text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbCarrito">
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4 text-secondary">Carrito vacío</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center fs-3 fw-bold border-top border-secondary pt-3 mt-2">
+                                <span class="text-white">Total:</span>
+                                <span class="text-warning" id="lblTotalVenta">Bs. 0.00</span>
+                            </div>
+                            <button id="btnRegistrarVenta" class="btn btn-warning w-100 py-3 mt-3 fs-5" onclick="procesarVenta()">
+                                <i class="bi bi-check-circle-fill me-2"></i>Registrar Venta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-dark p-3 mt-4">
+                    <h5 class="fw-bold mb-3 text-white"><i class="bi bi-clock-history me-2"></i>Ventas del Día</h5>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID Venta</th>
+                                    <th>Hora</th>
+                                    <th>Atendido Por</th>
+                                    <th>Detalle</th>
+                                    <th>Total</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbVentasDia">
+                                <!-- Carga dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO 2: INVENTARIO -->
+            <div id="sec-inventario" class="modulo-seccion d-none">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold text-warning mb-3" id="tituloFormInventario"><i class="bi bi-plus-circle me-2"></i>Nuevo Insumo</h5>
+                            <form id="formInventario" onsubmit="guardarInsumo(event)">
+                                <input type="hidden" id="insumoIndex" value="-1">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Nombre del Insumo</label>
+                                    <input type="text" id="insumoNombre" class="form-control" required placeholder="Ej: Carne de res">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Unidad de Medida</label>
+                                    <select id="insumoUnidad" class="form-select" required>
+                                        <option value="Kg">Kilogramos (Kg)</option>
+                                        <option value="Unidades">Unidades</option>
+                                        <option value="Litros">Litros</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label small fw-bold text-white">Cantidad</label>
+                                        <input type="number" step="0.01" id="insumoStock" class="form-control" required placeholder="0.00">
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label small fw-bold text-white">Costo Univ. (Bs)</label>
+                                        <input type="number" step="0.01" id="insumoCosto" class="form-control" required placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" id="btnGuardarInsumo" class="btn btn-warning w-100">Guardar</button>
+                                    <button type="button" class="btn btn-secondary" onclick="cancelarEdicionInsumo()">Limpiar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold text-white mb-3"><i class="bi bi-box-seam me-2"></i>Stock de Insumos En Almacén</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Insumo</th>
+                                            <th>Stock Actual</th>
+                                            <th>Costo Unit.</th>
+                                            <th>Valor Total</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbInventario">
+                                        <!-- Carga dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO 3: MERMAS -->
+            <div id="sec-mermas" class="modulo-seccion d-none">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold text-danger mb-3"><i class="bi bi-trash-fill me-2"></i>Registrar Pérdida / Merma</h5>
+                            <form id="formMerma" onsubmit="guardarMerma(event)">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Insumo Afectado</label>
+                                    <select id="mermaInsumoSelect" class="form-select" required>
+                                        <!-- Carga dinámicamente -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Cantidad Perder</label>
+                                    <input type="number" step="0.01" id="mermaCantidad" class="form-control" required placeholder="0.00">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Motivo / Explicación</label>
+                                    <textarea id="mermaMotivo" class="form-control" rows="3" required placeholder="Ej: Carne arruinada, papas vencidas..."></textarea>
+                                </div>
+                                <button type="submit" id="btnGuardarMerma" class="btn btn-danger w-100 fw-bold">Registrar Merma</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold text-white mb-3"><i class="bi bi-journal-x me-2"></i>Historial de Mermas Registradas</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Insumo</th>
+                                            <th>Cantidad</th>
+                                            <th>Motivo</th>
+                                            <th>Registrado Por</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbMermas">
+                                        <!-- Carga dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO 4: REPORTES -->
+            <div id="sec-reportes" class="modulo-seccion d-none">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold text-white mb-0"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>Métricas Generales</h4>
+                    <button class="btn btn-warning fw-bold px-4 py-2" onclick="exportarReportePDF()">
+                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar Reporte en PDF
+                    </button>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card-dark p-3 text-center border-start border-4 border-success">
+                            <span class="text-secondary small fw-bold">Ventas Totales</span>
+                            <h3 class="fw-bold text-success my-1" id="repVentasTotales">Bs. 0.00</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-dark p-3 text-center border-start border-4 border-primary">
+                            <span class="text-secondary small fw-bold">Valor Almacén</span>
+                            <h3 class="fw-bold text-primary my-1" id="repValorAlmacen">Bs. 0.00</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-dark p-3 text-center border-start border-4 border-danger">
+                            <span class="text-secondary small fw-bold">Total Mermas</span>
+                            <h3 class="fw-bold text-danger my-1" id="repTotalMermas">0.00 Kg</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-dark p-3 text-center border-start border-4 border-warning">
+                            <span class="text-secondary small fw-bold">Usuarios Activos</span>
+                            <h3 class="fw-bold text-warning my-1" id="repNumUsuarios">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÓDULO 5: USUARIOS Y ROLES -->
+            <div id="sec-usuarios" class="modulo-seccion d-none">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold text-warning mb-3" id="tituloFormUsuario"><i class="bi bi-person-plus me-2"></i>Crear Usuario</h5>
+                            <form id="formUsuario" onsubmit="guardarUsuario(event)">
+                                <input type="hidden" id="usuarioIndex" value="-1">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Nombre Completo</label>
+                                    <input type="text" id="userNombre" class="form-control" required placeholder="Ej: Kevin Jiménez">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Nombre de Usuario (Login)</label>
+                                    <input type="text" id="userUsername" class="form-control" required placeholder="Ej: kevin123">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Contraseña</label>
+                                    <input type="password" id="userPassword" class="form-control" required placeholder="••••••••">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-white">Rol Asignado</label>
+                                    <select id="userRol" class="form-select" required>
+                                        <option value="Administrador">Administrador</option>
+                                        <option value="Jefe de Cocina">Jefe de Cocina</option>
+                                        <option value="Cajero / POS">Cajero / POS</option>
+                                        <option value="Encargado de Almacén">Encargado de Almacén</option>
+                                        <option value="Auditor / Contador">Auditor / Contador (Solo Lectura)</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" id="btnGuardarUser" class="btn btn-warning w-100">Guardar Usuario</button>
+                                    <button type="button" class="btn btn-secondary" onclick="cancelarEdicionUser()">Limpiar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="card-dark p-3">
+                            <h5 class="fw-bold text-white mb-3"><i class="bi bi-people me-2"></i>Lista de Usuarios del Sistema</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Usuario</th>
+                                            <th>Rol</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbUsuarios">
+                                        <!-- Carga dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-          const API_BASE = "https://silpancheria-gestion.onrender.com/api";
-          let activeSection = "compras";
+            // ESTADO DE LA APLICACIÓN
+            let usuarioActual = null;
 
-          // Mock Fallback Data (In case backend is asleep or empty on Render)
-          const mockData = {
-            compras: [
-              { id: 101, proveedor: "Distribuidora Carne Cochabamba", fecha: "2026-09-20", total: 450.00, estado: "Pendiente" },
-              { id: 102, proveedor: "Avícola Sofía", fecha: "2026-09-21", total: 280.50, estado: "Confirmada" },
-              { id: 103, proveedor: "Mercado Central Papa y Verduras", fecha: "2026-09-22", total: 150.00, estado: "Confirmada" }
-            ],
-            detalle: [
-              { id: 1, compraId: 101, producto: "Carne para Silpancho (Kg)", cantidad: 15, precioUnitario: 30.00 },
-              { id: 2, compraId: 102, producto: "Huevos (Maples)", cantidad: 10, precioUnitario: 28.05 },
-              { id: 3, compraId: 103, producto: "Papa Imilla (Arrobas)", cantidad: 5, precioUnitario: 30.00 }
-            ],
-            stock: [
-              { id: 1, producto: "Carne de Res", tipoMovimiento: "Entrada", cantidad: 15, fecha: "2026-09-20 10:30" },
-              { id: 2, producto: "Huevos", tipoMovimiento: "Entrada", cantidad: 300, fecha: "2026-09-21 11:15" },
-              { id: 3, producto: "Pan Molido", tipoMovimiento: "Salida", cantidad: 5, fecha: "2026-09-22 08:00" }
-            ]
-          };
+            let usuarios = JSON.parse(localStorage.getItem('sys_usuarios')) || [
+              { nombre: 'Kevin Jiménez', usuario: 'admin', password: '123', rol: 'Administrador' },
+              { nombre: 'Chef Producción', usuario: 'chef', password: '123', rol: 'Jefe de Cocina' },
+              { nombre: 'Cajero Mostrador', usuario: 'cajero', password: '123', rol: 'Cajero / POS' },
+              { nombre: 'Almacenero', usuario: 'almacen', password: '123', rol: 'Encargado de Almacén' },
+              { nombre: 'Socio Contador', usuario: 'auditor', password: '123', rol: 'Auditor / Contador' }
+            ];
 
-          document.addEventListener('DOMContentLoaded', () => {
-            loadDashboard();
-          });
+            let productosPOS = [
+              { id: 1, nombre: 'Silpancho Simple', precio: 18.00, icono: 'bi-record-circle' },
+              { id: 2, nombre: 'Silpancho Doble', precio: 25.00, icono: 'bi-disc' },
+              { id: 3, nombre: 'Trancapecho', precio: 15.00, icono: 'bi-egg-fried' },
+              { id: 4, nombre: 'Gaseosa 500ml', precio: 7.00, icono: 'bi-cup-straw' },
+              { id: 5, nombre: 'Cerveza Personal', precio: 12.00, icono: 'bi-cup-hot' }
+            ];
 
-          // Switch between sections
-          function switchSection(section, event) {
-            if (event) event.preventDefault();
-            activeSection = section;
+            let inventario = JSON.parse(localStorage.getItem('sys_inventario')) || [
+              { nombre: 'Carne de res', unidad: 'Kg', stock: 15.5, costo: 32.0 },
+              { nombre: 'Papa imilla', unidad: 'Kg', stock: 40.0, costo: 4.5 },
+              { nombre: 'Huevos', unidad: 'Unidades', stock: 120, costo: 0.8 },
+              { nombre: 'Pan molido', unidad: 'Kg', stock: 10.0, costo: 6.0 }
+            ];
 
-            // Active link highlighting
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
-            if(event) event.currentTarget.classList.add('active');
+            let mermas = JSON.parse(localStorage.getItem('sys_mermas')) || [];
+            let ventas = JSON.parse(localStorage.getItem('sys_ventas')) || [];
+            let carrito = [];
 
-            const titles = {
-              compras: { title: "Gestión de Compras", sub: "Administra y confirma las compras realizadas al inventario", btn: "Nueva Compra" },
-              detalle: { title: "Detalle de Compras", sub: "Desglose de productos por lote de compra", btn: "Añadir Detalle" },
-              stock: { title: "Movimientos de Stock", sub: "Kardex e historial de entradas/salidas de insumos", btn: "Registrar Movimiento" }
+            // INICIALIZACIÓN
+            window.onload = () => {
+              const sesionGuardada = localStorage.getItem('sys_sesion_activa');
+              if (sesionGuardada) {
+                usuarioActual = JSON.parse(sesionGuardada);
+                iniciarEntorno();
+              }
             };
 
-            document.getElementById('sectionTitle').innerText = titles[section].title;
-            document.getElementById('sectionSubtitle').innerText = titles[section].sub;
-            document.getElementById('btnAddNewText').innerText = titles[section].btn;
+            function setCredenciales(u, p) {
+              document.getElementById('txtUsuario').value = u;
+              document.getElementById('txtPassword').value = p;
+            }
 
-            loadTableData();
-          }
+            function ejecutarLogin(e) {
+              e.preventDefault();
+              const u = document.getElementById('txtUsuario').value.trim();
+              const p = document.getElementById('txtPassword').value.trim();
 
-          // Load Table Data with API or Mock Fallback
-          async function loadTableData() {
-            const tbody = document.getElementById('tableBody');
-            const thead = document.getElementById('tableHeaders');
+              const user = usuarios.find(x => x.usuario === u && x.password === p);
 
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-warning" role="status"></div></td></tr>';
-
-            let endpoint = "";
-            if (activeSection === 'compras') endpoint = "/Compras";
-            else if (activeSection === 'detalle') endpoint = "/DetalleCompra";
-            else if (activeSection === 'stock') endpoint = "/MovimientosStock";
-
-            let data = [];
-            try {
-              const res = await fetch(API_BASE + endpoint);
-              if (res.ok) {
-                data = await res.json();
+              if (user) {
+                usuarioActual = user;
+                localStorage.setItem('sys_sesion_activa', JSON.stringify(user));
+                document.getElementById('errorLogin').classList.add('d-none');
+                iniciarEntorno();
               } else {
-                throw new Error("Fallback to mock");
+                document.getElementById('errorLogin').classList.remove('d-none');
               }
-            } catch (e) {
-              console.log("Usando datos de demostración para " + activeSection);
-              data = mockData[activeSection];
             }
 
-            updateKPIs();
-            renderTable(data);
-          }
+            function cerrarSesion() {
+              usuarioActual = null;
+              localStorage.removeItem('sys_sesion_activa');
+              document.getElementById('pantallaSistema').classList.add('d-none');
+              document.getElementById('pantallaLogin').classList.remove('d-none');
+            }
 
-          // Render Table content dynamically based on current section
-          function renderTable(data) {
-            const thead = document.getElementById('tableHeaders');
-            const tbody = document.getElementById('tableBody');
+            function iniciarEntorno() {
+              document.getElementById('pantallaLogin').classList.add('d-none');
+              document.getElementById('pantallaSistema').classList.remove('d-none');
 
-            if (activeSection === 'compras') {
-              thead.innerHTML = `
-                <th>ID Compra</th>
-                <th>Proveedor</th>
-                <th>Fecha</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th class="text-end">Acciones</th>
-              `;
+              document.getElementById('lblNombreUsuario').innerText = usuarioActual.nombre;
+              document.getElementById('lblRolBadge').innerText = usuarioActual.rol.toUpperCase();
 
-              tbody.innerHTML = data.map(item => `
+              aplicarPermisosRol();
+              renderProductosPOS();
+              renderCarrito();
+              renderVentas();
+              renderInventario();
+              renderMermas();
+              renderUsuarios();
+              actualizarReportes();
+            }
+
+            function aplicarPermisosRol() {
+              const r = usuarioActual.rol;
+              const esAuditor = r.includes('Auditor');
+
+              document.getElementById('alertaSoloLectura').classList.toggle('d-none', !esAuditor);
+              document.getElementById('li-usuarios').classList.toggle('d-none', r !== 'Administrador');
+
+              const botonesForm = document.querySelectorAll('button[type="submit"]');
+              botonesForm.forEach(btn => {
+                if (esAuditor) btn.setAttribute('disabled', 'true');
+                else btn.removeAttribute('disabled');
+              });
+
+              if (r.includes('Cajero')) cambiarModulo('pos');
+              else if (r.includes('Cocina')) cambiarModulo('mermas');
+              else if (r.includes('Almacén')) cambiarModulo('inventario');
+              else if (r.includes('Auditor')) cambiarModulo('reportes');
+              else cambiarModulo('pos');
+            }
+
+            function cambiarModulo(m) {
+              document.querySelectorAll('.modulo-seccion').forEach(s => s.classList.add('d-none'));
+              document.querySelectorAll('#mainNav .nav-link').forEach(btn => btn.classList.remove('active'));
+
+              document.getElementById(`sec-${m}`).classList.remove('d-none');
+              document.getElementById(`tab-${m}`).classList.add('active');
+            }
+
+            // MODULO POS
+            function renderProductosPOS() {
+              const g = document.getElementById('gridProductos');
+              g.innerHTML = productosPOS.map(p => `
+                <div class="col-6 col-md-4">
+                  <div class="pos-card" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">
+                    <i class="bi ${p.icono} text-warning display-5"></i>
+                    <span class="pos-card-title">${p.nombre}</span>
+                    <span class="pos-card-price">Bs. ${p.precio.toFixed(2)}</span>
+                  </div>
+                </div>
+              `).join('');
+            }
+
+            function agregarAlCarrito(nombre, precio) {
+              if (usuarioActual.rol.includes('Auditor')) return;
+              const index = carrito.findIndex(i => i.nombre === nombre);
+              if (index > -1) {
+                carrito[index].cant += 1;
+                carrito[index].subtotal = carrito[index].cant * precio;
+              } else {
+                carrito.push({ nombre, precio, cant: 1, subtotal: precio });
+              }
+              renderCarrito();
+            }
+
+            function renderCarrito() {
+              const tb = document.getElementById('tbCarrito');
+              if (carrito.length === 0) {
+                tb.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-secondary">Carrito vacío</td></tr>';
+                document.getElementById('lblTotalVenta').innerText = 'Bs. 0.00';
+                return;
+              }
+
+              let total = 0;
+              tb.innerHTML = carrito.map((item, idx) => {
+                total += item.subtotal;
+                return `
+                  <tr>
+                    <td class="text-white font-weight-bold">${item.nombre}</td>
+                    <td class="text-center text-white">${item.cant}</td>
+                    <td class="text-end text-warning font-weight-bold">Bs. ${item.subtotal.toFixed(2)}</td>
+                    <td class="text-center">
+                      <button class="btn btn-outline-danger btn-sm py-0 px-1" onclick="quitarCarrito(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}>&times;</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('');
+
+              document.getElementById('lblTotalVenta').innerText = `Bs. ${total.toFixed(2)}`;
+            }
+
+            function quitarCarrito(idx) {
+              carrito.splice(idx, 1);
+              renderCarrito();
+            }
+
+            function procesarVenta() {
+              if (carrito.length === 0) return alert('Seleccione productos primero.');
+              if (usuarioActual.rol.includes('Auditor')) return;
+
+              const total = carrito.reduce((sum, item) => sum + item.subtotal, 0);
+              const nuevaVenta = {
+                id: 'V-' + Math.floor(1000 + Math.random() * 9000),
+                hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                atendidoPor: usuarioActual.nombre,
+                detalle: carrito.map(c => `${c.cant}x ${c.nombre}`).join(', '),
+                total: total
+              };
+
+              ventas.unshift(nuevaVenta);
+              localStorage.setItem('sys_ventas', JSON.stringify(ventas));
+
+              carrito = [];
+              renderCarrito();
+              renderVentas();
+              actualizarReportes();
+              alert('Venta realizada con éxito.');
+            }
+
+            function renderVentas() {
+              const tb = document.getElementById('tbVentasDia');
+              if (ventas.length === 0) {
+                tb.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-secondary">No hay ventas registradas hoy.</td></tr>';
+                return;
+              }
+
+              tb.innerHTML = ventas.map((v, idx) => `
                 <tr>
-                  <td><span class="fw-bold text-warning">#${item.id || item.idCompra}</span></td>
-                  <td>${item.proveedor || 'Proveedor General'}</td>
-                  <td>${item.fecha || 'Reciente'}</td>
-                  <td class="fw-semibold">Bs. ${item.total ? item.total.toFixed(2) : '0.00'}</td>
-                  <td>
-                    <span class="badge-status ${item.estado === 'Confirmada' ? 'badge-completed' : 'badge-pending'}">
-                      ${item.estado || 'Pendiente'}
-                    </span>
-                  </td>
-                  <td class="text-end">
-                    ${item.estado !== 'Confirmada' ? `
-                      <button class="btn btn-sm btn-outline-success me-1" onclick="confirmarCompra(${item.id || item.idCompra})">
-                        <i class="bi bi-check-lg"></i> Confirmar
-                      </button>` : ''}
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id || item.idCompra})">
-                      <i class="bi bi-trash"></i>
-                    </button>
+                  <td class="fw-bold text-warning">${v.id}</td>
+                  <td class="text-white">${v.hora}</td>
+                  <td class="text-white">${v.atendidoPor}</td>
+                  <td class="small text-white">${v.detalle}</td>
+                  <td class="fw-bold text-success">Bs. ${v.total.toFixed(2)}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarVenta(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
                   </td>
                 </tr>
               `).join('');
+            }
 
-            } else if (activeSection === 'detalle') {
-              thead.innerHTML = `
-                <th>ID Detalle</th>
-                <th>ID Compra</th>
-                <th>Producto / Insumo</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th class="text-end">Acciones</th>
-              `;
+            function eliminarVenta(idx) {
+              if (confirm('¿Está seguro de eliminar este registro de venta?')) {
+                ventas.splice(idx, 1);
+                localStorage.setItem('sys_ventas', JSON.stringify(ventas));
+                renderVentas();
+                actualizarReportes();
+              }
+            }
 
-              tbody.innerHTML = data.map(item => `
+            // MODULO INVENTARIO
+            function guardarInsumo(e) {
+              e.preventDefault();
+              if (usuarioActual.rol.includes('Auditor')) return;
+
+              const idx = parseInt(document.getElementById('insumoIndex').value);
+              const nombre = document.getElementById('insumoNombre').value.trim();
+              const unidad = document.getElementById('insumoUnidad').value;
+              const stock = parseFloat(document.getElementById('insumoStock').value);
+              const costo = parseFloat(document.getElementById('insumoCosto').value);
+
+              if (idx === -1) {
+                inventario.push({ nombre, unidad, stock, costo });
+              } else {
+                inventario[idx] = { nombre, unidad, stock, costo };
+              }
+
+              localStorage.setItem('sys_inventario', JSON.stringify(inventario));
+              cancelarEdicionInsumo();
+              renderInventario();
+              renderMermas();
+              actualizarReportes();
+            }
+
+            function editarInsumo(idx) {
+              const i = inventario[idx];
+              document.getElementById('insumoIndex').value = idx;
+              document.getElementById('insumoNombre').value = i.nombre;
+              document.getElementById('insumoUnidad').value = i.unidad;
+              document.getElementById('insumoStock').value = i.stock;
+              document.getElementById('insumoCosto').value = i.costo;
+
+              document.getElementById('tituloFormInventario').innerText = 'Editar Insumo';
+              document.getElementById('btnGuardarInsumo').innerText = 'Actualizar';
+            }
+
+            function eliminarInsumo(idx) {
+              if (confirm('¿Desea eliminar este insumo del inventario?')) {
+                inventario.splice(idx, 1);
+                localStorage.setItem('sys_inventario', JSON.stringify(inventario));
+                renderInventario();
+                renderMermas();
+                actualizarReportes();
+              }
+            }
+
+            function cancelarEdicionInsumo() {
+              document.getElementById('insumoIndex').value = -1;
+              document.getElementById('formInventario').reset();
+              document.getElementById('tituloFormInventario').innerText = 'Nuevo Insumo';
+              document.getElementById('btnGuardarInsumo').innerText = 'Guardar';
+            }
+
+            function renderInventario() {
+              const tb = document.getElementById('tbInventario');
+              if (inventario.length === 0) {
+                tb.innerHTML = '<tr><td colspan="5" class="text-center py-3 text-secondary">Sin insumos registrados.</td></tr>';
+                return;
+              }
+
+              tb.innerHTML = inventario.map((i, idx) => `
                 <tr>
-                  <td>#${item.id || item.idDetalle}</td>
-                  <td><span class="badge-status badge-info">Compra #${item.compraId || 'N/A'}</span></td>
-                  <td class="fw-semibold">${item.producto || 'Insumo Silpancho'}</td>
-                  <td>${item.cantidad || 1}</td>
-                  <td>Bs. ${item.precioUnitario ? item.precioUnitario.toFixed(2) : '0.00'}</td>
-                  <td class="text-end">
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${item.id || item.idDetalle})">
-                      <i class="bi bi-trash"></i>
-                    </button>
+                  <td class="fw-bold text-white">${i.nombre}</td>
+                  <td class="text-white">${i.stock} ${i.unidad}</td>
+                  <td class="text-white">Bs. ${i.costo.toFixed(2)}</td>
+                  <td class="fw-bold text-warning">Bs. ${(i.stock * i.costo).toFixed(2)}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-warning btn-sm me-1" onclick="editarInsumo(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarInsumo(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
                   </td>
                 </tr>
               `).join('');
+            }
 
-            } else if (activeSection === 'stock') {
-              thead.innerHTML = `
-                <th>ID</th>
-                <th>Producto</th>
-                <th>Tipo Movimiento</th>
-                <th>Cantidad</th>
-                <th>Fecha / Hora</th>
-              `;
+            // MODULO MERMAS
+            function renderMermas() {
+              const select = document.getElementById('mermaInsumoSelect');
+              select.innerHTML = inventario.map(i => `<option value="${i.nombre}">${i.nombre} (${i.unidad})</option>`).join('');
 
-              tbody.innerHTML = data.map(item => `
+              const tb = document.getElementById('tbMermas');
+              if (mermas.length === 0) {
+                tb.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-secondary">Sin mermas registradas.</td></tr>';
+                return;
+              }
+
+              tb.innerHTML = mermas.map((m, idx) => `
                 <tr>
-                  <td>#${item.id}</td>
-                  <td class="fw-semibold">${item.producto}</td>
-                  <td>
-                    <span class="badge-status ${item.tipoMovimiento === 'Entrada' ? 'badge-completed' : 'badge-pending'}">
-                      <i class="bi bi-arrow-${item.tipoMovimiento === 'Entrada' ? 'down' : 'up'}-left"></i> ${item.tipoMovimiento}
-                    </span>
+                  <td class="text-white">${m.fecha}</td>
+                  <td class="fw-bold text-danger">${m.insumo}</td>
+                  <td class="text-white">${m.cantidad}</td>
+                  <td class="small text-white">${m.motivo}</td>
+                  <td class="text-white">${m.registradoPor}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarMerma(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
                   </td>
-                  <td>${item.cantidad}</td>
-                  <td class="text-muted small">${item.fecha || '2026-09-22'}</td>
                 </tr>
               `).join('');
             }
-          }
 
-          // Update KPI counters
-          function updateKPIs() {
-            document.getElementById('kpiTotalCompras').innerText = mockData.compras.length;
-            document.getElementById('kpiConfirmadas').innerText = mockData.compras.filter(c => c.estado === 'Confirmada').length;
-            document.getElementById('kpiStock').innerText = mockData.stock.length;
-            const totalInv = mockData.compras.reduce((acc, curr) => acc + (curr.total || 0), 0);
-            document.getElementById('kpiInversion').innerText = `Bs. ${totalInv.toFixed(2)}`;
-          }
+            function guardarMerma(e) {
+              e.preventDefault();
+              if (usuarioActual.rol.includes('Auditor')) return;
 
-          // Action: Confirm Purchase
-          async function confirmarCompra(id) {
-            if (!confirm(`¿Confirmar la compra #${id} e ingresar productos al stock?`)) return;
+              const insumo = document.getElementById('mermaInsumoSelect').value;
+              const cantidad = parseFloat(document.getElementById('mermaCantidad').value);
+              const motivo = document.getElementById('mermaMotivo').value.trim();
 
-            try {
-              const res = await fetch(`${API_BASE}/Compras/${id}/confirmar`, { method: 'PUT' });
-              alert('Compra confirmada correctamente.');
-            } catch (e) {
-              // Local fallback update
-              const compra = mockData.compras.find(c => (c.id || c.idCompra) === id);
-              if (compra) compra.estado = 'Confirmada';
-              alert(`Compra #${id} marcada como Confirmada.`);
-            }
-            loadTableData();
-          }
+              const nuevaMerma = {
+                fecha: new Date().toLocaleDateString(),
+                insumo,
+                cantidad,
+                motivo,
+                registradoPor: usuarioActual.nombre
+              };
 
-          // Action: Open Modal Form
-          function openAddModal() {
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
+              mermas.unshift(nuevaMerma);
+              localStorage.setItem('sys_mermas', JSON.stringify(mermas));
 
-            if (activeSection === 'compras') {
-              modalTitle.innerText = "Registrar Nueva Compra";
-              modalBody.innerHTML = `
-                <form id="activeForm">
-                  <div class="mb-3">
-                    <label class="form-label">Proveedor</label>
-                    <input type="text" id="inputProveedor" class="form-control" placeholder="Ej. Distribuidora Sofía" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Monto Total (Bs.)</label>
-                    <input type="number" step="0.01" id="inputTotal" class="form-control" placeholder="0.00" required>
-                  </div>
-                </form>
-              `;
-            } else if (activeSection === 'detalle') {
-              modalTitle.innerText = "Agregar Detalle de Compra";
-              modalBody.innerHTML = `
-                <form id="activeForm">
-                  <div class="mb-3">
-                    <label class="form-label">ID Compra Asociada</label>
-                    <input type="number" id="inputCompraId" class="form-control" placeholder="Ej. 101" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Nombre del Producto / Insumo</label>
-                    <input type="text" id="inputProducto" class="form-control" placeholder="Ej. Carne de Res (Kg)" required>
-                  </div>
-                  <div class="row">
-                    <div class="col-6 mb-3">
-                      <label class="form-label">Cantidad</label>
-                      <input type="number" id="inputCantidad" class="form-control" placeholder="1" required>
-                    </div>
-                    <div class="col-6 mb-3">
-                      <label class="form-label">Precio U. (Bs.)</label>
-                      <input type="number" step="0.01" id="inputPrecio" class="form-control" placeholder="0.00" required>
-                    </div>
-                  </div>
-                </form>
-              `;
-            } else {
-              modalTitle.innerText = "Registrar Movimiento de Stock";
-              modalBody.innerHTML = `
-                <form id="activeForm">
-                  <div class="mb-3">
-                    <label class="form-label">Producto</label>
-                    <input type="text" id="inputProducto" class="form-control" placeholder="Ej. Arroz (Arrobas)" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Tipo de Movimiento</label>
-                    <select id="inputTipo" class="form-select">
-                      <option value="Entrada">Entrada (+)</option>
-                      <option value="Salida">Salida (-)</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Cantidad</label>
-                    <input type="number" id="inputCantidad" class="form-control" placeholder="1" required>
-                  </div>
-                </form>
-              `;
+              document.getElementById('formMerma').reset();
+              renderMermas();
+              actualizarReportes();
             }
 
-            new bootstrap.Modal(document.getElementById('crudModal')).show();
-          }
-
-          // Submit Modal Form (POST Request)
-          async function submitModalForm() {
-            if (activeSection === 'compras') {
-              const prov = document.getElementById('inputProveedor').value;
-              const tot = parseFloat(document.getElementById('inputTotal').value) || 0;
-
-              const newRecord = { id: Date.now(), proveedor: prov, fecha: new Date().toISOString().split('T')[0], total: tot, estado: "Pendiente" };
-              mockData.compras.unshift(newRecord);
-
-              try {
-                await fetch(`${API_BASE}/Compras`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ proveedor: prov, total: tot })
-                });
-              } catch (e) {}
-
-            } else if (activeSection === 'detalle') {
-              const cId = parseInt(document.getElementById('inputCompraId').value);
-              const prod = document.getElementById('inputProducto').value;
-              const cant = parseInt(document.getElementById('inputCantidad').value);
-              const prec = parseFloat(document.getElementById('inputPrecio').value);
-
-              mockData.detalle.unshift({ id: Date.now(), compraId: cId, producto: prod, cantidad: cant, precioUnitario: prec });
-
-            } else if (activeSection === 'stock') {
-              const prod = document.getElementById('inputProducto').value;
-              const tipo = document.getElementById('inputTipo').value;
-              const cant = parseInt(document.getElementById('inputCantidad').value);
-
-              mockData.stock.unshift({ id: Date.now(), producto: prod, tipoMovimiento: tipo, cantidad: cant, fecha: "Justo ahora" });
+            function eliminarMerma(idx) {
+              if (confirm('¿Eliminar este registro de merma?')) {
+                mermas.splice(idx, 1);
+                localStorage.setItem('sys_mermas', JSON.stringify(mermas));
+                renderMermas();
+                actualizarReportes();
+              }
             }
 
-            bootstrap.Modal.getInstance(document.getElementById('crudModal')).hide();
-            loadTableData();
-          }
+            // MODULO USUARIOS Y ROLES
+            function guardarUsuario(e) {
+              e.preventDefault();
+              if (usuarioActual.rol !== 'Administrador') return;
 
-          // Filter table search
-          function filterTable() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach(row => {
-              row.style.display = row.innerText.toLowerCase().includes(val) ? '' : 'none';
-            });
-          }
+              const idx = parseInt(document.getElementById('usuarioIndex').value);
+              const nombre = document.getElementById('userNombre').value.trim();
+              const usuario = document.getElementById('userUsername').value.trim();
+              const password = document.getElementById('userPassword').value.trim();
+              const rol = document.getElementById('userRol').value;
 
-          // Delete Item
-          function deleteItem(id) {
-            if (!confirm(`¿Estás seguro de eliminar el registro #${id}?`)) return;
-            mockData[activeSection] = mockData[activeSection].filter(item => (item.id || item.idCompra || item.idDetalle) !== id);
-            loadTableData();
-          }
+              if (idx === -1) {
+                usuarios.push({ nombre, usuario, password, rol });
+              } else {
+                usuarios[idx] = { nombre, usuario, password, rol };
+              }
+
+              localStorage.setItem('sys_usuarios', JSON.stringify(usuarios));
+              cancelarEdicionUser();
+              renderUsuarios();
+              actualizarReportes();
+            }
+
+            function editarUsuario(idx) {
+              const u = usuarios[idx];
+              document.getElementById('usuarioIndex').value = idx;
+              document.getElementById('userNombre').value = u.nombre;
+              document.getElementById('userUsername').value = u.usuario;
+              document.getElementById('userPassword').value = u.password;
+              document.getElementById('userRol').value = u.rol;
+
+              document.getElementById('tituloFormUsuario').innerText = 'Editar Usuario';
+              document.getElementById('btnGuardarUser').innerText = 'Actualizar';
+            }
+
+            function eliminarUsuario(idx) {
+              if (confirm('¿Desea eliminar este usuario del sistema?')) {
+                usuarios.splice(idx, 1);
+                localStorage.setItem('sys_usuarios', JSON.stringify(usuarios));
+                renderUsuarios();
+                actualizarReportes();
+              }
+            }
+
+            function cancelarEdicionUser() {
+              document.getElementById('usuarioIndex').value = -1;
+              document.getElementById('formUsuario').reset();
+              document.getElementById('tituloFormUsuario').innerText = 'Crear Usuario';
+              document.getElementById('btnGuardarUser').innerText = 'Guardar Usuario';
+            }
+
+            function renderUsuarios() {
+              const tb = document.getElementById('tbUsuarios');
+              tb.innerHTML = usuarios.map((u, idx) => `
+                <tr>
+                  <td class="fw-bold text-white">${u.nombre}</td>
+                  <td class="text-warning">${u.usuario}</td>
+                  <td><span class="badge bg-secondary">${u.rol}</span></td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-warning btn-sm me-1" onclick="editarUsuario(${idx})"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarUsuario(${idx})" ${u.usuario === 'admin' ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
+                  </td>
+                </tr>
+              `).join('');
+            }
+
+            // REPORTES Y METRICAS
+            function actualizarReportes() {
+              const totalVentas = ventas.reduce((s, v) => s + v.total, 0);
+              const valorAlmacen = inventario.reduce((s, i) => s + (i.stock * i.costo), 0);
+              const totalMermas = mermas.reduce((s, m) => s + m.cantidad, 0);
+
+              document.getElementById('repVentasTotales').innerText = `Bs. ${totalVentas.toFixed(2)}`;
+              document.getElementById('repValorAlmacen').innerText = `Bs. ${valorAlmacen.toFixed(2)}`;
+              document.getElementById('repTotalMermas').innerText = `${totalMermas.toFixed(2)} Kg/Unit`;
+              document.getElementById('repNumUsuarios').innerText = usuarios.length;
+            }
+
+            // GENERACIÓN DE REPORTE PDF
+            function exportarReportePDF() {
+              const { jsPDF } = window.jspdf;
+              const doc = new jsPDF();
+
+              const fechaHora = new Date().toLocaleString();
+
+              // Encabezado del documento PDF
+              doc.setFontSize(18);
+              doc.setTextColor(245, 158, 11);
+              doc.text("SILPANCHERÍA POS - REPORTE GENERAL", 14, 20);
+
+              doc.setFontSize(10);
+              doc.setTextColor(100);
+              doc.text(`Generado por: ${usuarioActual.nombre} (${usuarioActual.rol})`, 14, 27);
+              doc.text(`Fecha y Hora: ${fechaHora}`, 14, 32);
+
+              // Resumen Métricas
+              doc.setFontSize(12);
+              doc.setTextColor(0);
+              doc.text("1. Resumen Ejecutivo de Métricas", 14, 42);
+
+              const totalVentas = ventas.reduce((s, v) => s + v.total, 0);
+              const valorAlmacen = inventario.reduce((s, i) => s + (i.stock * i.costo), 0);
+              const totalMermas = mermas.reduce((s, m) => s + m.cantidad, 0);
+
+              doc.autoTable({
+                startY: 46,
+                head: [['Métrica', 'Valor']],
+                body: [
+                  ['Ventas Totales Registradas', `Bs. ${totalVentas.toFixed(2)}`],
+                  ['Valor Total en Almacén', `Bs. ${valorAlmacen.toFixed(2)}`],
+                  ['Pérdidas acumuladas (Mermas)', `${totalMermas.toFixed(2)} Kg/Unidades`],
+                  ['Usuarios Registrados', usuarios.length.toString()]
+                ],
+                theme: 'striped',
+                headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0] }
+              });
+
+              // Tabla de Ventas
+              doc.text("2. Historial de Ventas del Día", 14, doc.lastAutoTable.finalY + 12);
+              const dataVentas = ventas.map(v => [v.id, v.hora, v.atendidoPor, v.detalle, `Bs. ${v.total.toFixed(2)}`]);
+
+              doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 16,
+                head: [['ID Venta', 'Hora', 'Cajero', 'Detalle', 'Total']],
+                body: dataVentas.length > 0 ? dataVentas : [['-', '-', '-', 'Sin ventas registradas', 'Bs. 0.00']],
+                theme: 'grid',
+                headStyles: { fillColor: [30, 41, 59] }
+              });
+
+              // Tabla de Inventario
+              doc.text("3. Estado del Inventario de Insumos", 14, doc.lastAutoTable.finalY + 12);
+              const dataInventario = inventario.map(i => [i.nombre, `${i.stock} ${i.unidad}`, `Bs. ${i.costo.toFixed(2)}`, `Bs. ${(i.stock * i.costo).toFixed(2)}`]);
+
+              doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 16,
+                head: [['Insumo', 'Stock Actual', 'Costo Unit.', 'Valor Total']],
+                body: dataInventario.length > 0 ? dataInventario : [['-', '-', '-', '-']],
+                theme: 'grid',
+                headStyles: { fillColor: [30, 41, 59] }
+              });
+
+              // Guardar PDF
+              doc.save(`Reporte_Silpancheria_${new Date().toISOString().slice(0, 10)}.pdf`);
+            }
     </script>
 </body>
+</html>

@@ -7,6 +7,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// --- 1. CONFIGURAR CORS ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirTodo", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Registrar Supabase
 builder.Services.AddSingleton<SupabaseService>();
 
@@ -24,11 +35,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// --- 2. HABILITAR CORS Y ARCHIVOS ESTÁTICOS ---
+app.UseCors("PermitirTodo");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

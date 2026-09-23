@@ -6,11 +6,9 @@
     <title>Sistema de Gestión - Silpanchería POS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
     <!-- LIBRERÍAS PARA GENERAR PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -29,7 +27,6 @@
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
         }
-
         /* PANTALLA LOGIN */
         .login-container {
             min-height: 100vh;
@@ -59,7 +56,6 @@
                 border-color: var(--accent-yellow) !important;
                 box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25) !important;
             }
-
         /* COMPONENTES GENERALES */
         .card-dark {
             background-color: var(--card-bg);
@@ -84,7 +80,6 @@
                 background-color: var(--accent-yellow);
                 color: #000000;
             }
-
         /* PRODUCTOS POS */
         .pos-card {
             background-color: var(--card-bg);
@@ -121,7 +116,6 @@
             font-weight: 800;
             font-size: 1.15rem;
         }
-
         /* TABLAS ALTO CONTRASTE */
         .table-dark {
             --bs-table-bg: #1e293b;
@@ -169,33 +163,29 @@
                 <h3 class="fw-bold mt-2 text-white">Silpanchería POS</h3>
                 <p class="text-secondary small">Ingrese sus credenciales para ingresar</p>
             </div>
-
             <div id="errorLogin" class="alert alert-danger d-none py-2 text-center small fw-semibold">
                 Usuario o contraseña incorrectos.
             </div>
-
             <form onsubmit="ejecutarLogin(event)">
                 <div class="mb-3">
                     <label class="form-label small fw-bold text-white">Usuario</label>
-                    <input type="text" id="txtUsuario" class="form-control" required placeholder="Ej: admin, chef, cajero">
+                    <input type="text" id="txtUsuario" class="form-control" required placeholder="E.g: admin, chef, cajero">
                 </div>
                 <div class="mb-4">
                     <label class="form-label small fw-bold text-white">Contraseña</label>
-                    <input type="password" id="txtPassword" class="form-control" required placeholder="••••••••">
+                    <input type="password" id="txtPassword" class="form-control" required placeholder="........">
                 </div>
                 <button type="submit" class="btn btn-warning w-100 py-2 fs-6">Iniciar Sesión</button>
             </form>
-
             <hr class="my-4 border-secondary">
-
             <div class="small">
                 <span class="text-white d-block mb-2 fw-bold">Accesos rápidos de prueba:</span>
                 <div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('admin','123')">Admin</button>
-                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('chef','123')">Cocina</button>
-                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('cajero','123')">Cajero</button>
-                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('almacen','123')">Almacén</button>
-                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('auditor','123')">Auditor</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('admin', '123')">Admin</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('chef', '123')">Cocina</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('cajero', '123')">Cajero</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('almacen', '123')">Almacén</button>
+                    <button class="btn btn-outline-light btn-sm" onclick="setCredenciales('auditor', '123')">Auditor</button>
                 </div>
             </div>
         </div>
@@ -231,6 +221,11 @@
                 <li class="nav-item">
                     <button class="nav-link" id="tab-inventario" onclick="cambiarModulo('inventario')">
                         <i class="bi bi-box-seam me-2"></i>Inventario de Insumos
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-mermas" onclick="cambiarModulo('mermas')">
+                        <i class="bi bi-trash me-2"></i>Mermas / Pérdidas
                     </button>
                 </li>
                 <li class="nav-item">
@@ -343,19 +338,18 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="card-dark p-3 mt-4">
                     <h5 class="fw-bold mb-3 text-white"><i class="bi bi-clock-history me-2"></i>Ventas del Día</h5>
                     <div class="table-responsive">
-                        <table class="table table-dark table-striped align-middle mb-0">
+                        <table class="table table-dark table-striped align-middle mb-0 text-center">
                             <thead>
                                 <tr>
                                     <th>ID Venta</th>
-                                    <th>Hora</th>
+                                    <th>Fecha y Hora</th>
                                     <th>Atendido Por</th>
                                     <th>Detalle</th>
                                     <th>Total</th>
-                                    <th class="text-center">Acciones</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tbVentasDia">
@@ -403,19 +397,18 @@
                             </form>
                         </div>
                     </div>
-
                     <div class="col-md-8">
                         <div class="card-dark p-3">
                             <h5 class="fw-bold text-white mb-3"><i class="bi bi-box-seam me-2"></i>Stock de Insumos En Almacén</h5>
                             <div class="table-responsive">
-                                <table class="table table-dark table-striped align-middle mb-0">
+                                <table class="table table-dark table-striped align-middle mb-0 text-center">
                                     <thead>
                                         <tr>
                                             <th>Insumo</th>
                                             <th>Stock Actual</th>
                                             <th>Costo Unit.</th>
                                             <th>Valor Total</th>
-                                            <th class="text-center">Acciones</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbInventario">
@@ -453,20 +446,19 @@
                             </form>
                         </div>
                     </div>
-
                     <div class="col-md-8">
                         <div class="card-dark p-3">
                             <h5 class="fw-bold text-white mb-3"><i class="bi bi-journal-x me-2"></i>Historial de Mermas Registradas</h5>
                             <div class="table-responsive">
-                                <table class="table table-dark table-striped align-middle mb-0">
+                                <table class="table table-dark table-striped align-middle mb-0 text-center">
                                     <thead>
                                         <tr>
-                                            <th>Fecha</th>
+                                            <th>Fecha y Hora</th>
                                             <th>Insumo</th>
                                             <th>Cantidad</th>
                                             <th>Motivo</th>
                                             <th>Registrado Por</th>
-                                            <th class="text-center">Acciones</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbMermas">
@@ -479,38 +471,58 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 4: REPORTES -->
+            <!-- MÓDULO 4: REPORTES INDIVIDUALES -->
             <div id="sec-reportes" class="modulo-seccion d-none">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold text-white mb-0"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>Métricas Generales</h4>
-                    <button class="btn btn-warning fw-bold px-4 py-2" onclick="exportarReportePDF()">
-                        <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar Reporte en PDF
-                    </button>
+                    <h4 class="fw-bold text-white mb-0"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>Métricas y Reportes Individuales</h4>
                 </div>
-
                 <div class="row g-4 mb-4">
+                    <!-- Tarjeta 1: Métricas -->
                     <div class="col-md-3">
-                        <div class="card-dark p-3 text-center border-start border-4 border-success">
-                            <span class="text-secondary small fw-bold">Ventas Totales</span>
-                            <h3 class="fw-bold text-success my-1" id="repVentasTotales">Bs. 0.00</h3>
+                        <div class="card-dark p-3 text-center border-start border-4 border-warning h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <span class="text-secondary small fw-bold d-block">Resumen de Métricas</span>
+                                <h3 class="fw-bold text-warning my-2" id="repVentasTotales">Bs. 0.00</h3>
+                            </div>
+                            <button class="btn btn-sm btn-outline-warning w-100 mt-3 fw-bold" onclick="exportarMetricasPDF()">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar Métricas
+                            </button>
                         </div>
                     </div>
+                    <!-- Tarjeta 2: Ventas -->
                     <div class="col-md-3">
-                        <div class="card-dark p-3 text-center border-start border-4 border-primary">
-                            <span class="text-secondary small fw-bold">Valor Almacén</span>
-                            <h3 class="fw-bold text-primary my-1" id="repValorAlmacen">Bs. 0.00</h3>
+                        <div class="card-dark p-3 text-center border-start border-4 border-success h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <span class="text-secondary small fw-bold d-block">Reporte de Ventas</span>
+                                <h3 class="fw-bold text-success my-2" id="repNumVentas">0 Ventas</h3>
+                            </div>
+                            <button class="btn btn-sm btn-outline-success w-100 mt-3 fw-bold" onclick="exportarVentasPDF()">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar Ventas
+                            </button>
                         </div>
                     </div>
+                    <!-- Tarjeta 3: Almacén e Inventario -->
                     <div class="col-md-3">
-                        <div class="card-dark p-3 text-center border-start border-4 border-danger">
-                            <span class="text-secondary small fw-bold">Total Mermas</span>
-                            <h3 class="fw-bold text-danger my-1" id="repTotalMermas">0.00 Kg</h3>
+                        <div class="card-dark p-3 text-center border-start border-4 border-primary h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <span class="text-secondary small fw-bold d-block">Valor en Almacén</span>
+                                <h3 class="fw-bold text-primary my-2" id="repValorAlmacen">Bs. 0.00</h3>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary w-100 mt-3 fw-bold" onclick="exportarInventarioPDF()">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar Inventario
+                            </button>
                         </div>
                     </div>
+                    <!-- Tarjeta 4: Mermas -->
                     <div class="col-md-3">
-                        <div class="card-dark p-3 text-center border-start border-4 border-warning">
-                            <span class="text-secondary small fw-bold">Usuarios Activos</span>
-                            <h3 class="fw-bold text-warning my-1" id="repNumUsuarios">0</h3>
+                        <div class="card-dark p-3 text-center border-start border-4 border-danger h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <span class="text-secondary small fw-bold d-block">Total Mermas</span>
+                                <h3 class="fw-bold text-danger my-2" id="repTotalMermas">0.00 Kg</h3>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger w-100 mt-3 fw-bold" onclick="exportarMermasPDF()">
+                                <i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar Mermas
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -534,7 +546,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-white">Contraseña</label>
-                                    <input type="password" id="userPassword" class="form-control" required placeholder="••••••••">
+                                    <input type="password" id="userPassword" class="form-control" required placeholder="........">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small fw-bold text-white">Rol Asignado</label>
@@ -553,18 +565,17 @@
                             </form>
                         </div>
                     </div>
-
                     <div class="col-md-8">
                         <div class="card-dark p-3">
                             <h5 class="fw-bold text-white mb-3"><i class="bi bi-people me-2"></i>Lista de Usuarios del Sistema</h5>
                             <div class="table-responsive">
-                                <table class="table table-dark table-striped align-middle mb-0">
+                                <table class="table table-dark table-striped align-middle mb-0 text-center">
                                     <thead>
                                         <tr>
                                             <th>Nombre</th>
                                             <th>Usuario</th>
                                             <th>Rol</th>
-                                            <th class="text-center">Acciones</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbUsuarios">
@@ -577,788 +588,702 @@
                 </div>
             </div>
 
+            <!-- MÓDULOS DE TABLAS AUXILIARES -->
+            <div id="sec-productos" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-box-seam me-2"></i>Gestión de Productos</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Stock</th><th>Mín.</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbProductos"><tr><td colspan="8" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-categorias" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-tags me-2"></i>Gestión de Categorías</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbCategorias"><tr><td colspan="5" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-personas" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-person-vcard me-2"></i>Gestión de Personas</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbPersonas"><tr><td colspan="7" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-empleados" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-people-fill me-2"></i>Gestión de Empleados</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>#Empleado</th><th>Cargo</th><th>Departamento</th><th>Salario</th><th>Ingreso</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbEmpleados"><tr><td colspan="8" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-cocineros" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-person-arms-up me-2"></i>Gestión de Cocineros</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Empleado</th><th>Especialidad</th><th>Especializaciones</th><th>Certificación</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbCocineros"><tr><td colspan="7" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-ventas" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-coin me-2"></i>Historial de Ventas</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>#Venta</th><th>Fecha y Hora</th><th>Total</th><th>Pago</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbVentas"><tr><td colspan="7" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-compras" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-bag-fill me-2"></i>Gestión de Compras</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Fecha y Hora</th><th>Total</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbCompras"><tr><td colspan="5" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-proveedores" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-building me-2"></i>Gestión de Proveedores</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Dirección</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbProveedores"><tr><td colspan="7" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-recetas" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-book me-2"></i>Gestión de Recetas</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Plato</th><th>Ingrediente</th><th>Cantidad</th><th>Unidad</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbRecetas"><tr><td colspan="6" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="sec-movimientos" class="modulo-seccion d-none">
+                <h4 class="mb-3"><i class="bi bi-arrow-left-right me-2"></i>Movimientos de Stock</h4>
+                <div class="card-dark p-3 table-responsive">
+                    <table class="table table-dark table-striped align-middle text-center">
+                        <thead>
+                            <tr><th>ID</th><th>Fecha y Hora</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbMovimientos"><tr><td colspan="6" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-            // ESTADO DE LA APLICACIÓN
-            let usuarioActual = null;
+// ESTADO DE LA APLICACIÓN
+let usuarioActual = null;
+let usuarios = JSON.parse(localStorage.getItem('sys_usuarios')) || [
+            { nombre: 'Kevin Jiménez', usuario: 'admin', password: '123', rol: 'Administrador' },
+            { nombre: 'Chef Producción', usuario: 'chef', password: '123', rol: 'Jefe de Cocina' },
+            { nombre: 'Cajero Mostrador', usuario: 'cajero', password: '123', rol: 'Cajero / POS' },
+            { nombre: 'Almacenero', usuario: 'almacen', password: '123', rol: 'Encargado de Almacén' },
+            { nombre: 'Socio Contador', usuario: 'auditor', password: '123', rol: 'Auditor / Contador' }
+];
+let productosPOS = [
+            { id: 1, nombre: 'Silpancho Simple', precio: 18.00, icono: 'bi-record-circle' },
+            { id: 2, nombre: 'Silpancho Doble', precio: 25.00, icono: 'bi-disc' },
+            { id: 3, nombre: 'Trancapecho', precio: 15.00, icono: 'bi-egg-fried' },
+            { id: 4, nombre: 'Gaseosa 500ml', precio: 7.00, icono: 'bi-cup-straw' },
+            { id: 5, nombre: 'Cerveza Personal', precio: 12.00, icono: 'bi-cup-hot' }
+];
+let inventario = JSON.parse(localStorage.getItem('sys_inventario')) || [
+            { nombre: 'Carne de res', unidad: 'Kg', stock: 15.5, costo: 32.0 },
+            { nombre: 'Papa imilla', unidad: 'Kg', stock: 40.0, costo: 4.5 },
+            { nombre: 'Huevos', unidad: 'Unidades', stock: 120, costo: 0.8 },
+            { nombre: 'Pan molido', unidad: 'Kg', stock: 10.0, costo: 6.0 }
+];
+let mermas = JSON.parse(localStorage.getItem('sys_mermas')) || [];
+let ventas = JSON.parse(localStorage.getItem('sys_ventas')) || [];
+let carrito = [];
 
-            let usuarios = JSON.parse(localStorage.getItem('sys_usuarios')) || [
-              { nombre: 'Kevin Jiménez', usuario: 'admin', password: '123', rol: 'Administrador' },
-              { nombre: 'Chef Producción', usuario: 'chef', password: '123', rol: 'Jefe de Cocina' },
-              { nombre: 'Cajero Mostrador', usuario: 'cajero', password: '123', rol: 'Cajero / POS' },
-              { nombre: 'Almacenero', usuario: 'almacen', password: '123', rol: 'Encargado de Almacén' },
-              { nombre: 'Socio Contador', usuario: 'auditor', password: '123', rol: 'Auditor / Contador' }
-            ];
+// FUNCIÓN AUXILIAR PARA FORMATEAR FECHA Y HORA COMPLETAS
+function obtenerFechaHoraActual() {
+            const ahora = new Date();
+            const dia = ahora.getDate();
+            const mes = ahora.getMonth() + 1;
+            const anio = ahora.getFullYear();
+            const hora = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return `${dia}/${mes}/${anio} ${hora}`;
+}
 
-            let productosPOS = [
-              { id: 1, nombre: 'Silpancho Simple', precio: 18.00, icono: 'bi-record-circle' },
-              { id: 2, nombre: 'Silpancho Doble', precio: 25.00, icono: 'bi-disc' },
-              { id: 3, nombre: 'Trancapecho', precio: 15.00, icono: 'bi-egg-fried' },
-              { id: 4, nombre: 'Gaseosa 500ml', precio: 7.00, icono: 'bi-cup-straw' },
-              { id: 5, nombre: 'Cerveza Personal', precio: 12.00, icono: 'bi-cup-hot' }
-            ];
+// FORMATO NORMALIZADO DE REGISTROS ANTIGUOS
+function obtenerFechaFormateada(item) {
+            if (item.fechaHora) {
+                if (item.fechaHora.includes('/')) return item.fechaHora;
+                return `${new Date().toLocaleDateString()} ${item.fechaHora}`;
+            }
+            if (item.hora) {
+                return `${new Date().toLocaleDateString()} ${item.hora}`;
+            }
+            if (item.fecha) {
+                return `${item.fecha} ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            }
+            return obtenerFechaHoraActual();
+}
 
-            let inventario = JSON.parse(localStorage.getItem('sys_inventario')) || [
-              { nombre: 'Carne de res', unidad: 'Kg', stock: 15.5, costo: 32.0 },
-              { nombre: 'Papa imilla', unidad: 'Kg', stock: 40.0, costo: 4.5 },
-              { nombre: 'Huevos', unidad: 'Unidades', stock: 120, costo: 0.8 },
-              { nombre: 'Pan molido', unidad: 'Kg', stock: 10.0, costo: 6.0 }
-            ];
-
-            let mermas = JSON.parse(localStorage.getItem('sys_mermas')) || [];
-            let ventas = JSON.parse(localStorage.getItem('sys_ventas')) || [];
-            let carrito = [];
-
-            // INICIALIZACIÓN
-            window.onload = () => {
-              const sesionGuardada = localStorage.getItem('sys_sesion_activa');
-              if (sesionGuardada) {
+// INICIALIZACIÓN
+window.onload = () => {
+            const sesionGuardada = localStorage.getItem('sys_sesion_activa');
+            if (sesionGuardada) {
                 usuarioActual = JSON.parse(sesionGuardada);
                 iniciarEntorno();
-              }
-            };
-
-            function setCredenciales(u, p) {
-              document.getElementById('txtUsuario').value = u;
-              document.getElementById('txtPassword').value = p;
             }
+};
 
-            function ejecutarLogin(e) {
-              e.preventDefault();
-              const u = document.getElementById('txtUsuario').value.trim();
-              const p = document.getElementById('txtPassword').value.trim();
+function setCredenciales(u, p) {
+            document.getElementById('txtUsuario').value = u;
+            document.getElementById('txtPassword').value = p;
+}
 
-              const user = usuarios.find(x => x.usuario === u && x.password === p);
-
-              if (user) {
+function ejecutarLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('txtUsuario').value.trim();
+            const p = document.getElementById('txtPassword').value.trim();
+            const user = usuarios.find(x => x.usuario === u && x.password === p);
+            if (user) {
                 usuarioActual = user;
                 localStorage.setItem('sys_sesion_activa', JSON.stringify(user));
                 document.getElementById('errorLogin').classList.add('d-none');
                 iniciarEntorno();
-              } else {
+            } else {
                 document.getElementById('errorLogin').classList.remove('d-none');
-              }
             }
+}
 
-            function cerrarSesion() {
-              usuarioActual = null;
-              localStorage.removeItem('sys_sesion_activa');
-              document.getElementById('pantallaSistema').classList.add('d-none');
-              document.getElementById('pantallaLogin').classList.remove('d-none');
-            }
+function cerrarSesion() {
+            usuarioActual = null;
+            localStorage.removeItem('sys_sesion_activa');
+            document.getElementById('pantallaSistema').classList.add('d-none');
+            document.getElementById('pantallaLogin').classList.remove('d-none');
+}
 
-            function iniciarEntorno() {
-              document.getElementById('pantallaLogin').classList.add('d-none');
-              document.getElementById('pantallaSistema').classList.remove('d-none');
+function iniciarEntorno() {
+            document.getElementById('pantallaLogin').classList.add('d-none');
+            document.getElementById('pantallaSistema').classList.remove('d-none');
+            document.getElementById('lblNombreUsuario').innerText = usuarioActual.nombre;
+            document.getElementById('lblRolBadge').innerText = usuarioActual.rol.toUpperCase();
+            aplicarPermisosRol();
+}
 
-              document.getElementById('lblNombreUsuario').innerText = usuarioActual.nombre;
-              document.getElementById('lblRolBadge').innerText = usuarioActual.rol.toUpperCase();
+function aplicarPermisosRol() {
+            const r = usuarioActual.rol;
+            const esAuditor = r.includes('Auditor');
+            document.getElementById('alertaSoloLectura').classList.toggle('d-none', !esAuditor);
+            document.getElementById('li-usuarios').classList.toggle('d-none', r !== 'Administrador');
 
-              aplicarPermisosRol();
-              renderProductosPOS();
-              renderCarrito();
-              renderVentas();
-              renderInventario();
-              renderMermas();
-              renderUsuarios();
-              actualizarReportes();
-            }
-
-            function aplicarPermisosRol() {
-              const r = usuarioActual.rol;
-              const esAuditor = r.includes('Auditor');
-
-              document.getElementById('alertaSoloLectura').classList.toggle('d-none', !esAuditor);
-              document.getElementById('li-usuarios').classList.toggle('d-none', r !== 'Administrador');
-
-              const botonesForm = document.querySelectorAll('button[type="submit"]');
-              botonesForm.forEach(btn => {
+            const botonesForm = document.querySelectorAll('button[type="submit"]');
+            botonesForm.forEach(btn => {
                 if (esAuditor) btn.setAttribute('disabled', 'true');
                 else btn.removeAttribute('disabled');
-              });
+            });
 
-              if (r.includes('Cajero')) cambiarModulo('pos');
-              else if (r.includes('Cocina')) cambiarModulo('mermas');
-              else if (r.includes('Almacén')) cambiarModulo('inventario');
-              else if (r.includes('Auditor')) cambiarModulo('reportes');
-              else cambiarModulo('pos');
+            if (r.includes('Cajero')) cambiarModulo('pos');
+            else if (r.includes('Cocina')) cambiarModulo('mermas');
+            else if (r.includes('Almacén')) cambiarModulo('inventario');
+            else if (r.includes('Auditor')) cambiarModulo('reportes');
+            else cambiarModulo('pos');
+}
+
+function cambiarModulo(m) {
+            document.querySelectorAll('.modulo-seccion').forEach(s => s.classList.add('d-none'));
+            document.querySelectorAll('#mainNav .nav-link').forEach(btn => btn.classList.remove('active'));
+
+            const sec = document.getElementById(`sec-${m}`);
+            const tab = document.getElementById(`tab-${m}`);
+            if (sec) sec.classList.remove('d-none');
+            if (tab) tab.classList.add('active');
+
+            switch(m) {
+                case 'reportes': actualizarReportes(); break;
+                case 'pos': renderProductosPOS(); renderCarrito(); renderVentas(); break;
+                case 'inventario': renderInventario(); break;
+                case 'mermas': renderMermas(); break;
+                case 'usuarios': renderUsuarios(); break;
             }
+}
 
-            function cambiarModulo(m) {
-              document.querySelectorAll('.modulo-seccion').forEach(s => s.classList.add('d-none'));
-              document.querySelectorAll('#mainNav .nav-link').forEach(btn => btn.classList.remove('active'));
-
-              document.getElementById(`sec-${m}`).classList.remove('d-none');
-              document.getElementById(`tab-${m}`).classList.add('active');
-            }
-
-            // MODULO POS
-            function renderProductosPOS() {
-              const g = document.getElementById('gridProductos');
-              g.innerHTML = productosPOS.map(p => `
+// MÓDULO POS
+function renderProductosPOS() {
+            const g = document.getElementById('gridProductos');
+            g.innerHTML = productosPOS.map(p => `
                 <div class="col-6 col-md-4">
-                  <div class="pos-card" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">
-                    <i class="bi ${p.icono} text-warning display-5"></i>
-                    <span class="pos-card-title">${p.nombre}</span>
-                    <span class="pos-card-price">Bs. ${p.precio.toFixed(2)}</span>
-                  </div>
+                    <div class="pos-card" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">
+                        <i class="bi ${p.icono} text-warning display-5"></i>
+                        <span class="pos-card-title">${p.nombre}</span>
+                        <span class="pos-card-price">Bs. ${p.precio.toFixed(2)}</span>
+                    </div>
                 </div>
-              `).join('');
-            }
+            `).join('');
+}
 
-            function agregarAlCarrito(nombre, precio) {
-              if (usuarioActual.rol.includes('Auditor')) return;
-              const index = carrito.findIndex(i => i.nombre === nombre);
-              if (index > -1) {
+function agregarAlCarrito(nombre, precio) {
+            if (usuarioActual.rol.includes('Auditor')) return;
+            const index = carrito.findIndex(i => i.nombre === nombre);
+            if (index > -1) {
                 carrito[index].cant += 1;
                 carrito[index].subtotal = carrito[index].cant * precio;
-              } else {
+            } else {
                 carrito.push({ nombre, precio, cant: 1, subtotal: precio });
-              }
-              renderCarrito();
             }
+            renderCarrito();
+}
 
-            function renderCarrito() {
-              const tb = document.getElementById('tbCarrito');
-              if (carrito.length === 0) {
+function renderCarrito() {
+            const tb = document.getElementById('tbCarrito');
+            if (carrito.length === 0) {
                 tb.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-secondary">Carrito vacío</td></tr>';
                 document.getElementById('lblTotalVenta').innerText = 'Bs. 0.00';
                 return;
-              }
-
-              let total = 0;
-              tb.innerHTML = carrito.map((item, idx) => {
+            }
+            let total = 0;
+            tb.innerHTML = carrito.map((item, idx) => {
                 total += item.subtotal;
                 return `
-                  <tr>
-                    <td class="text-white font-weight-bold">${item.nombre}</td>
-                    <td class="text-center text-white">${item.cant}</td>
-                    <td class="text-end text-warning font-weight-bold">Bs. ${item.subtotal.toFixed(2)}</td>
-                    <td class="text-center">
-                      <button class="btn btn-outline-danger btn-sm py-0 px-1" onclick="quitarCarrito(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}>&times;</button>
-                    </td>
-                  </tr>
+                    <tr>
+                        <td class="text-white font-weight-bold">${item.nombre}</td>
+                        <td class="text-center text-white">${item.cant}</td>
+                        <td class="text-end text-warning font-weight-bold">Bs. ${item.subtotal.toFixed(2)}</td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-danger btn-sm py-0 px-1" onclick="quitarCarrito(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}>&times;</button>
+                        </td>
+                    </tr>
                 `;
-              }).join('');
+            }).join('');
+            document.getElementById('lblTotalVenta').innerText = `Bs. ${total.toFixed(2)}`;
+}
 
-              document.getElementById('lblTotalVenta').innerText = `Bs. ${total.toFixed(2)}`;
-            }
+function quitarCarrito(idx) {
+            carrito.splice(idx, 1);
+            renderCarrito();
+}
 
-            function quitarCarrito(idx) {
-              carrito.splice(idx, 1);
-              renderCarrito();
-            }
+function procesarVenta() {
+            if (carrito.length === 0) return alert('Seleccione productos primero.');
+            if (usuarioActual.rol.includes('Auditor')) return;
 
-            function procesarVenta() {
-              if (carrito.length === 0) return alert('Seleccione productos primero.');
-              if (usuarioActual.rol.includes('Auditor')) return;
+            const fechaHora = obtenerFechaHoraActual();
+            const total = carrito.reduce((sum, item) => sum + item.subtotal, 0);
 
-              const total = carrito.reduce((sum, item) => sum + item.subtotal, 0);
-              const nuevaVenta = {
+            const nuevaVenta = {
                 id: 'V-' + Math.floor(1000 + Math.random() * 9000),
-                hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                fechaHora: fechaHora,
                 atendidoPor: usuarioActual.nombre,
                 detalle: carrito.map(c => `${c.cant}x ${c.nombre}`).join(', '),
                 total: total
-              };
+            };
 
-              ventas.unshift(nuevaVenta);
-              localStorage.setItem('sys_ventas', JSON.stringify(ventas));
+            ventas.unshift(nuevaVenta);
+            localStorage.setItem('sys_ventas', JSON.stringify(ventas));
+            carrito = [];
+            renderCarrito();
+            renderVentas();
+            actualizarReportes();
+            alert('Venta realizada con éxito.');
+}
 
-              carrito = [];
-              renderCarrito();
-              renderVentas();
-              actualizarReportes();
-              alert('Venta realizada con éxito.');
-            }
-
-            function renderVentas() {
-              const tb = document.getElementById('tbVentasDia');
-              if (ventas.length === 0) {
+function renderVentas() {
+            const tb = document.getElementById('tbVentasDia');
+            if (ventas.length === 0) {
                 tb.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-secondary">No hay ventas registradas hoy.</td></tr>';
                 return;
-              }
-
-              tb.innerHTML = ventas.map((v, idx) => `
-                <tr>
-                  <td class="fw-bold text-warning">${v.id}</td>
-                  <td class="text-white">${v.hora}</td>
-                  <td class="text-white">${v.atendidoPor}</td>
-                  <td class="small text-white">${v.detalle}</td>
-                  <td class="fw-bold text-success">Bs. ${v.total.toFixed(2)}</td>
-                  <td class="text-center">
-                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarVenta(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
-                  </td>
-                </tr>
-              `).join('');
             }
+            tb.innerHTML = ventas.map((v, idx) => `
+                <tr>
+                    <td class="fw-bold text-warning">${v.id}</td>
+                    <td class="text-white">${obtenerFechaFormateada(v)}</td>
+                    <td class="text-white">${v.atendidoPor}</td>
+                    <td class="small text-white">${v.detalle}</td>
+                    <td class="fw-bold text-success">Bs. ${v.total.toFixed(2)}</td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarVenta(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+}
 
-            function eliminarVenta(idx) {
-              if (confirm('¿Está seguro de eliminar este registro de venta?')) {
+function eliminarVenta(idx) {
+            if (confirm('¿Está seguro de eliminar este registro de venta?')) {
                 ventas.splice(idx, 1);
                 localStorage.setItem('sys_ventas', JSON.stringify(ventas));
                 renderVentas();
                 actualizarReportes();
-              }
             }
+}
 
-            // MODULO INVENTARIO
-            function guardarInsumo(e) {
-              e.preventDefault();
-              if (usuarioActual.rol.includes('Auditor')) return;
+// MÓDULO INVENTARIO
+function guardarInsumo(e) {
+            e.preventDefault();
+            if (usuarioActual.rol.includes('Auditor')) return;
+            const idx = parseInt(document.getElementById('insumoIndex').value);
+            const nombre = document.getElementById('insumoNombre').value.trim();
+            const unidad = document.getElementById('insumoUnidad').value;
+            const stock = parseFloat(document.getElementById('insumoStock').value);
+            const costo = parseFloat(document.getElementById('insumoCosto').value);
 
-              const idx = parseInt(document.getElementById('insumoIndex').value);
-              const nombre = document.getElementById('insumoNombre').value.trim();
-              const unidad = document.getElementById('insumoUnidad').value;
-              const stock = parseFloat(document.getElementById('insumoStock').value);
-              const costo = parseFloat(document.getElementById('insumoCosto').value);
-
-              if (idx === -1) {
+            if (idx === -1) {
                 inventario.push({ nombre, unidad, stock, costo });
-              } else {
+            } else {
                 inventario[idx] = { nombre, unidad, stock, costo };
-              }
-
-              localStorage.setItem('sys_inventario', JSON.stringify(inventario));
-              cancelarEdicionInsumo();
-              renderInventario();
-              renderMermas();
-              actualizarReportes();
             }
+            localStorage.setItem('sys_inventario', JSON.stringify(inventario));
+            cancelarEdicionInsumo();
+            renderInventario();
+            renderMermas();
+            actualizarReportes();
+}
 
-            function editarInsumo(idx) {
-              const i = inventario[idx];
-              document.getElementById('insumoIndex').value = idx;
-              document.getElementById('insumoNombre').value = i.nombre;
-              document.getElementById('insumoUnidad').value = i.unidad;
-              document.getElementById('insumoStock').value = i.stock;
-              document.getElementById('insumoCosto').value = i.costo;
+function editarInsumo(idx) {
+            const i = inventario[idx];
+            document.getElementById('insumoIndex').value = idx;
+            document.getElementById('insumoNombre').value = i.nombre;
+            document.getElementById('insumoUnidad').value = i.unidad;
+            document.getElementById('insumoStock').value = i.stock;
+            document.getElementById('insumoCosto').value = i.costo;
+            document.getElementById('tituloFormInventario').innerText = 'Editar Insumo';
+            document.getElementById('btnGuardarInsumo').innerText = 'Actualizar';
+}
 
-              document.getElementById('tituloFormInventario').innerText = 'Editar Insumo';
-              document.getElementById('btnGuardarInsumo').innerText = 'Actualizar';
-            }
-
-            function eliminarInsumo(idx) {
-              if (confirm('¿Desea eliminar este insumo del inventario?')) {
+function eliminarInsumo(idx) {
+            if (confirm('¿Desea eliminar este insumo del inventario?')) {
                 inventario.splice(idx, 1);
                 localStorage.setItem('sys_inventario', JSON.stringify(inventario));
                 renderInventario();
                 renderMermas();
                 actualizarReportes();
-              }
             }
+}
 
-            function cancelarEdicionInsumo() {
-              document.getElementById('insumoIndex').value = -1;
-              document.getElementById('formInventario').reset();
-              document.getElementById('tituloFormInventario').innerText = 'Nuevo Insumo';
-              document.getElementById('btnGuardarInsumo').innerText = 'Guardar';
-            }
+function cancelarEdicionInsumo() {
+            document.getElementById('insumoIndex').value = -1;
+            document.getElementById('formInventario').reset();
+            document.getElementById('tituloFormInventario').innerText = 'Nuevo Insumo';
+            document.getElementById('btnGuardarInsumo').innerText = 'Guardar';
+}
 
-            function renderInventario() {
-              const tb = document.getElementById('tbInventario');
-              if (inventario.length === 0) {
-                tb.innerHTML = '<tr><td colspan="5" class="text-center py-3 text-secondary">Sin insumos registrados.</td></tr>';
+function renderInventario() {
+            const tb = document.getElementById('tbInventario');
+            if (inventario.length === 0) {
+                tb.innerHTML = '<tr><td colspan="5" class="text-center py-3 text-secondary">Sin insumos registrados</td></tr>';
                 return;
-              }
-
-              tb.innerHTML = inventario.map((i, idx) => `
-                <tr>
-                  <td class="fw-bold text-white">${i.nombre}</td>
-                  <td class="text-white">${i.stock} ${i.unidad}</td>
-                  <td class="text-white">Bs. ${i.costo.toFixed(2)}</td>
-                  <td class="fw-bold text-warning">Bs. ${(i.stock * i.costo).toFixed(2)}</td>
-                  <td class="text-center">
-                    <button class="btn btn-outline-warning btn-sm me-1" onclick="editarInsumo(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarInsumo(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
-                  </td>
-                </tr>
-              `).join('');
             }
+            tb.innerHTML = inventario.map((i, idx) => `
+                <tr>
+                    <td class="fw-bold text-white">${i.nombre}</td>
+                    <td class="text-white">${i.stock} ${i.unidad}</td>
+                    <td class="text-white">Bs. ${i.costo.toFixed(2)}</td>
+                    <td class="fw-bold text-warning">Bs. ${(i.stock * i.costo).toFixed(2)}</td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-warning btn-sm me-1" onclick="editarInsumo(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarInsumo(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+}
 
-            // MODULO MERMAS
-            function renderMermas() {
-              const select = document.getElementById('mermaInsumoSelect');
-              select.innerHTML = inventario.map(i => `<option value="${i.nombre}">${i.nombre} (${i.unidad})</option>`).join('');
-
-              const tb = document.getElementById('tbMermas');
-              if (mermas.length === 0) {
+// MÓDULO MERMAS
+function renderMermas() {
+            const select = document.getElementById('mermaInsumoSelect');
+            if (select) {
+                select.innerHTML = inventario.map(i => `<option value="${i.nombre}">${i.nombre} (${i.unidad})</option>`).join('');
+            }
+            const tb = document.getElementById('tbMermas');
+            if (mermas.length === 0) {
                 tb.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-secondary">Sin mermas registradas.</td></tr>';
                 return;
-              }
-
-              tb.innerHTML = mermas.map((m, idx) => `
+            }
+            tb.innerHTML = mermas.map((m, idx) => `
                 <tr>
-                  <td class="text-white">${m.fecha}</td>
-                  <td class="fw-bold text-danger">${m.insumo}</td>
-                  <td class="text-white">${m.cantidad}</td>
-                  <td class="small text-white">${m.motivo}</td>
-                  <td class="text-white">${m.registradoPor}</td>
-                  <td class="text-center">
-                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarMerma(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
-                  </td>
+                    <td class="text-white">${obtenerFechaFormateada(m)}</td>
+                    <td class="fw-bold text-danger">${m.insumo}</td>
+                    <td class="text-white">${m.cantidad}</td>
+                    <td class="small text-white">${m.motivo}</td>
+                    <td class="text-white">${m.registradoPor}</td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarMerma(${idx})" ${usuarioActual.rol.includes('Auditor') ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
+                    </td>
                 </tr>
-              `).join('');
-            }
+            `).join('');
+}
 
-            function guardarMerma(e) {
-              e.preventDefault();
-              if (usuarioActual.rol.includes('Auditor')) return;
+function guardarMerma(e) {
+            e.preventDefault();
+            if (usuarioActual.rol.includes('Auditor')) return;
 
-              const insumo = document.getElementById('mermaInsumoSelect').value;
-              const cantidad = parseFloat(document.getElementById('mermaCantidad').value);
-              const motivo = document.getElementById('mermaMotivo').value.trim();
+            const fechaHora = obtenerFechaHoraActual();
+            const insumo = document.getElementById('mermaInsumoSelect').value;
+            const cantidad = parseFloat(document.getElementById('mermaCantidad').value);
+            const motivo = document.getElementById('mermaMotivo').value.trim();
 
-              const nuevaMerma = {
-                fecha: new Date().toLocaleDateString(),
-                insumo,
-                cantidad,
-                motivo,
+            const nuevaMerma = {
+                fechaHora: fechaHora,
+                insumo: insumo,
+                cantidad: cantidad,
+                motivo: motivo,
                 registradoPor: usuarioActual.nombre
-              };
+            };
 
-              mermas.unshift(nuevaMerma);
-              localStorage.setItem('sys_mermas', JSON.stringify(mermas));
+            mermas.unshift(nuevaMerma);
+            localStorage.setItem('sys_mermas', JSON.stringify(mermas));
+            document.getElementById('formMerma').reset();
+            renderMermas();
+            actualizarReportes();
+}
 
-              document.getElementById('formMerma').reset();
-              renderMermas();
-              actualizarReportes();
-            }
-
-            function eliminarMerma(idx) {
-              if (confirm('¿Eliminar este registro de merma?')) {
+function eliminarMerma(idx) {
+            if (confirm('¿Eliminar este registro de merma?')) {
                 mermas.splice(idx, 1);
                 localStorage.setItem('sys_mermas', JSON.stringify(mermas));
                 renderMermas();
                 actualizarReportes();
-              }
             }
+}
 
-            // MODULO USUARIOS Y ROLES
-            function guardarUsuario(e) {
-              e.preventDefault();
-              if (usuarioActual.rol !== 'Administrador') return;
+// MÓDULO USUARIOS Y ROLES
+function guardarUsuario(e) {
+            e.preventDefault();
+            if (usuarioActual.rol !== 'Administrador') return;
+            const idx = parseInt(document.getElementById('usuarioIndex').value);
+            const nombre = document.getElementById('userNombre').value.trim();
+            const usuario = document.getElementById('userUsername').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            const rol = document.getElementById('userRol').value;
 
-              const idx = parseInt(document.getElementById('usuarioIndex').value);
-              const nombre = document.getElementById('userNombre').value.trim();
-              const usuario = document.getElementById('userUsername').value.trim();
-              const password = document.getElementById('userPassword').value.trim();
-              const rol = document.getElementById('userRol').value;
-
-              if (idx === -1) {
+            if (idx === -1) {
                 usuarios.push({ nombre, usuario, password, rol });
-              } else {
+            } else {
                 usuarios[idx] = { nombre, usuario, password, rol };
-              }
-
-              localStorage.setItem('sys_usuarios', JSON.stringify(usuarios));
-              cancelarEdicionUser();
-              renderUsuarios();
-              actualizarReportes();
             }
+            localStorage.setItem('sys_usuarios', JSON.stringify(usuarios));
+            cancelarEdicionUser();
+            renderUsuarios();
+            actualizarReportes();
+}
 
-            function editarUsuario(idx) {
-              const u = usuarios[idx];
-              document.getElementById('usuarioIndex').value = idx;
-              document.getElementById('userNombre').value = u.nombre;
-              document.getElementById('userUsername').value = u.usuario;
-              document.getElementById('userPassword').value = u.password;
-              document.getElementById('userRol').value = u.rol;
+function editarUsuario(idx) {
+            const u = usuarios[idx];
+            document.getElementById('usuarioIndex').value = idx;
+            document.getElementById('userNombre').value = u.nombre;
+            document.getElementById('userUsername').value = u.usuario;
+            document.getElementById('userPassword').value = u.password;
+            document.getElementById('userRol').value = u.rol;
+            document.getElementById('tituloFormUsuario').innerText = 'Editar Usuario';
+            document.getElementById('btnGuardarUser').innerText = 'Actualizar';
+}
 
-              document.getElementById('tituloFormUsuario').innerText = 'Editar Usuario';
-              document.getElementById('btnGuardarUser').innerText = 'Actualizar';
-            }
-
-            function eliminarUsuario(idx) {
-              if (confirm('¿Desea eliminar este usuario del sistema?')) {
+function eliminarUsuario(idx) {
+            if (confirm('¿Desea eliminar este usuario del sistema?')) {
                 usuarios.splice(idx, 1);
                 localStorage.setItem('sys_usuarios', JSON.stringify(usuarios));
                 renderUsuarios();
                 actualizarReportes();
-              }
             }
+}
 
-            function cancelarEdicionUser() {
-              document.getElementById('usuarioIndex').value = -1;
-              document.getElementById('formUsuario').reset();
-              document.getElementById('tituloFormUsuario').innerText = 'Crear Usuario';
-              document.getElementById('btnGuardarUser').innerText = 'Guardar Usuario';
-            }
+function cancelarEdicionUser() {
+            document.getElementById('usuarioIndex').value = -1;
+            document.getElementById('formUsuario').reset();
+            document.getElementById('tituloFormUsuario').innerText = 'Crear Usuario';
+            document.getElementById('btnGuardarUser').innerText = 'Guardar Usuario';
+}
 
-            function renderUsuarios() {
-              const tb = document.getElementById('tbUsuarios');
-              tb.innerHTML = usuarios.map((u, idx) => `
+function renderUsuarios() {
+            const tb = document.getElementById('tbUsuarios');
+            tb.innerHTML = usuarios.map((u, idx) => `
                 <tr>
-                  <td class="fw-bold text-white">${u.nombre}</td>
-                  <td class="text-warning">${u.usuario}</td>
-                  <td><span class="badge bg-secondary">${u.rol}</span></td>
-                  <td class="text-center">
-                    <button class="btn btn-outline-warning btn-sm me-1" onclick="editarUsuario(${idx})"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarUsuario(${idx})" ${u.usuario === 'admin' ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
-                  </td>
+                    <td class="fw-bold text-white">${u.nombre}</td>
+                    <td class="text-warning">${u.usuario}</td>
+                    <td><span class="badge bg-secondary">${u.rol}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-warning btn-sm me-1" onclick="editarUsuario(${idx})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarUsuario(${idx})" ${u.usuario === 'admin' ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
+                    </td>
                 </tr>
-              `).join('');
-            }
+            `).join('');
+}
 
-            // REPORTES Y METRICAS
-            function actualizarReportes() {
-              const totalVentas = ventas.reduce((s, v) => s + v.total, 0);
-              const valorAlmacen = inventario.reduce((s, i) => s + (i.stock * i.costo), 0);
-              const totalMermas = mermas.reduce((s, m) => s + m.cantidad, 0);
+// REPORTES Y MÉTRICAS
+function actualizarReportes() {
+            const totalVentas = ventas.reduce((s, v) => s + v.total, 0);
+            const valorAlmacen = inventario.reduce((s, i) => s + (i.stock * i.costo), 0);
+            const totalMermas = mermas.reduce((s, m) => s + m.cantidad, 0);
 
-              document.getElementById('repVentasTotales').innerText = `Bs. ${totalVentas.toFixed(2)}`;
-              document.getElementById('repValorAlmacen').innerText = `Bs. ${valorAlmacen.toFixed(2)}`;
-              document.getElementById('repTotalMermas').innerText = `${totalMermas.toFixed(2)} Kg/Unit`;
-              document.getElementById('repNumUsuarios').innerText = usuarios.length;
-            }
+            if (document.getElementById('repVentasTotales'))
+                document.getElementById('repVentasTotales').innerText = `Bs. ${totalVentas.toFixed(2)}`;
+            if (document.getElementById('repNumVentas'))
+                document.getElementById('repNumVentas').innerText = `${ventas.length} Ventas`;
+            if (document.getElementById('repValorAlmacen'))
+                document.getElementById('repValorAlmacen').innerText = `Bs. ${valorAlmacen.toFixed(2)}`;
+            if (document.getElementById('repTotalMermas'))
+                document.getElementById('repTotalMermas').innerText = `${totalMermas.toFixed(2)} Kg/Unit`;
+}
 
-            // GENERACIÓN DE REPORTE PDF
-            function exportarReportePDF() {
-              const { jsPDF } = window.jspdf;
-              const doc = new jsPDF();
+// ENCABEZADO CENTRADO PARA LOS ARCHIVOS PDF
+function crearHeaderPDF(doc, tituloReporte) {
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const fechaHora = obtenerFechaHoraActual();
 
-              const fechaHora = new Date().toLocaleString();
+            doc.setFontSize(16);
+            doc.setTextColor(245, 158, 11);
+            doc.text(`SILPANCHERÍA POS - ${tituloReporte}`, pageWidth / 2, 18, { align: 'center' });
 
-              // Encabezado del documento PDF
-              doc.setFontSize(18);
-              doc.setTextColor(245, 158, 11);
-              doc.text("SILPANCHERÍA POS - REPORTE GENERAL", 14, 20);
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Generado por: ${usuarioActual ? usuarioActual.nombre : 'Sistema'} (${usuarioActual ? usuarioActual.rol : 'Admin'})`, pageWidth / 2, 25, { align: 'center' });
+            doc.text(`Fecha y Hora de descarga: ${fechaHora}`, pageWidth / 2, 30, { align: 'center' });
+}
 
-              doc.setFontSize(10);
-              doc.setTextColor(100);
-              doc.text(`Generado por: ${usuarioActual.nombre} (${usuarioActual.rol})`, 14, 27);
-              doc.text(`Fecha y Hora: ${fechaHora}`, 14, 32);
+// 1. DESCARGAR MÉTRICAS
+function exportarMetricasPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            crearHeaderPDF(doc, "REPORTE DE MÉTRICAS GENERALES");
 
-              // Resumen Métricas
-              doc.setFontSize(12);
-              doc.setTextColor(0);
-              doc.text("1. Resumen Ejecutivo de Métricas", 14, 42);
+            const totalVentas = ventas.reduce((s, v) => s + v.total, 0);
+            const valorAlmacen = inventario.reduce((s, i) => s + (i.stock * i.costo), 0);
+            const totalMermas = mermas.reduce((s, m) => s + m.cantidad, 0);
 
-              const totalVentas = ventas.reduce((s, v) => s + v.total, 0);
-              const valorAlmacen = inventario.reduce((s, i) => s + (i.stock * i.costo), 0);
-              const totalMermas = mermas.reduce((s, m) => s + m.cantidad, 0);
-
-              doc.autoTable({
-                startY: 46,
+            doc.autoTable({
+                startY: 38,
                 head: [['Métrica', 'Valor']],
                 body: [
-                  ['Ventas Totales Registradas', `Bs. ${totalVentas.toFixed(2)}`],
-                  ['Valor Total en Almacén', `Bs. ${valorAlmacen.toFixed(2)}`],
-                  ['Pérdidas acumuladas (Mermas)', `${totalMermas.toFixed(2)} Kg/Unidades`],
-                  ['Usuarios Registrados', usuarios.length.toString()]
+                    ['Ventas Totales Registradas', `Bs. ${totalVentas.toFixed(2)}`],
+                    ['Valor Total en Almacén', `Bs. ${valorAlmacen.toFixed(2)}`],
+                    ['Pérdidas Acumuladas (Mermas)', `${totalMermas.toFixed(2)} Kg/Unidades`],
+                    ['Usuarios Registrados', usuarios.length.toString()]
                 ],
                 theme: 'striped',
-                headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0] }
-              });
+                headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0], halign: 'center' },
+                styles: { halign: 'center' }
+            });
 
-              // Tabla de Ventas
-              doc.text("2. Historial de Ventas del Día", 14, doc.lastAutoTable.finalY + 12);
-              const dataVentas = ventas.map(v => [v.id, v.hora, v.atendidoPor, v.detalle, `Bs. ${v.total.toFixed(2)}`]);
+            doc.save(`Reporte_Metricas_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
 
-              doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 16,
-                head: [['ID Venta', 'Hora', 'Cajero', 'Detalle', 'Total']],
+// 2. DESCARGAR HISTORIAL DE VENTAS (TOTALMENTE CENTRADO Y CON FECHA Y HORA)
+function exportarVentasPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            crearHeaderPDF(doc, "HISTORIAL DE VENTAS DEL DÍA");
+
+            const dataVentas = ventas.map(v => [
+                v.id,
+                obtenerFechaFormateada(v),
+                v.atendidoPor,
+                v.detalle,
+                `Bs. ${v.total.toFixed(2)}`
+            ]);
+
+            doc.autoTable({
+                startY: 38,
+                head: [['ID Venta', 'Fecha y Hora', 'Cajero', 'Detalle', 'Total']],
                 body: dataVentas.length > 0 ? dataVentas : [['-', '-', '-', 'Sin ventas registradas', 'Bs. 0.00']],
                 theme: 'grid',
-                headStyles: { fillColor: [30, 41, 59] }
-              });
+                headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255], halign: 'center' },
+                styles: { halign: 'center', valign: 'middle' }
+            });
 
-              // Tabla de Inventario
-              doc.text("3. Estado del Inventario de Insumos", 14, doc.lastAutoTable.finalY + 12);
-              const dataInventario = inventario.map(i => [i.nombre, `${i.stock} ${i.unidad}`, `Bs. ${i.costo.toFixed(2)}`, `Bs. ${(i.stock * i.costo).toFixed(2)}`]);
+            doc.save(`Reporte_Ventas_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
 
-              doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 16,
+// 3. DESCARGAR INVENTARIO
+function exportarInventarioPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            crearHeaderPDF(doc, "ESTADO DEL INVENTARIO DE INSUMOS");
+
+            const dataInventario = inventario.map(i => [
+                i.nombre,
+                `${i.stock} ${i.unidad}`,
+                `Bs. ${i.costo.toFixed(2)}`,
+                `Bs. ${(i.stock * i.costo).toFixed(2)}`
+            ]);
+
+            doc.autoTable({
+                startY: 38,
                 head: [['Insumo', 'Stock Actual', 'Costo Unit.', 'Valor Total']],
                 body: dataInventario.length > 0 ? dataInventario : [['-', '-', '-', '-']],
                 theme: 'grid',
-                headStyles: { fillColor: [30, 41, 59] }
-              });
+                headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255], halign: 'center' },
+                styles: { halign: 'center', valign: 'middle' }
+            });
 
-              // Guardar PDF
-              doc.save(`Reporte_Silpancheria_${new Date().toISOString().slice(0, 10)}.pdf`);
-            }
+            doc.save(`Reporte_Inventario_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
+
+// 4. DESCARGAR HISTORIAL DE MERMAS
+function exportarMermasPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            crearHeaderPDF(doc, "HISTORIAL DE MERMAS Y PÉRDIDAS");
+
+            const dataMermas = mermas.map(m => [
+                obtenerFechaFormateada(m),
+                m.insumo,
+                m.cantidad,
+                m.motivo,
+                m.registradoPor
+            ]);
+
+            doc.autoTable({
+                startY: 38,
+                head: [['Fecha y Hora', 'Insumo', 'Cantidad', 'Motivo', 'Registrado Por']],
+                body: dataMermas.length > 0 ? dataMermas : [['-', '-', '-', 'Sin mermas registradas', '-']],
+                theme: 'grid',
+                headStyles: { fillColor: [239, 68, 68], textColor: [255, 255, 255], halign: 'center' },
+                styles: { halign: 'center', valign: 'middle' }
+            });
+
+            doc.save(`Reporte_Mermas_${new Date().toISOString().slice(0, 10)}.pdf`);
+}
     </script>
 
-    <!-- Script para API -->
+    <!-- Script de API externa -->
     <script src="js/api.js"></script>
 
-    <!-- SECCIONES PARA NUEVOS MÓDULOS -->
-    <script>
-        // Funciones de cambio de módulo
-        function cambiarModulo(modulo) {
-            document.querySelectorAll('.modulo-seccion').forEach(el => el.classList.add('d-none'));
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-
-            const seccion = document.getElementById(`sec-${modulo}`);
-            const boton = document.getElementById(`tab-${modulo}`);
-
-            if (seccion) seccion.classList.remove('d-none');
-            if (boton) boton.classList.add('active');
-
-            // Cargar datos cuando cambia de módulo
-            switch(modulo) {
-                case 'productos': cargarProductos(); break;
-                case 'categorias': cargarCategorias(); break;
-                case 'personas': cargarPersonas(); break;
-                case 'empleados': cargarEmpleados(); break;
-                case 'cocineros': cargarCocineros(); break;
-                case 'ventas': cargarVentas(); break;
-                case 'compras': cargarCompras(); break;
-                case 'proveedores': cargarProveedores(); break;
-                case 'recetas': cargarRecetas(); break;
-                case 'movimientos': cargarMovimientos(); break;
-                case 'reportes': cargarReportes(); break;
-            }
-        }
-    </script>
-</head>
-<body>
-    <div id="pantallaLogin" class="login-container">
-        <div class="login-card">
-            <div class="text-center mb-4">
-                <i class="bi bi-shop text-warning" style="font-size: 3rem;"></i>
-                <h3 class="fw-bold text-white mt-3">SILPANCHERÍA POS</h3>
-            </div>
-            <form onsubmit="iniciarSesion(event)">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Usuario</label>
-                    <input type="text" id="usuario" class="form-control" placeholder="Ingrese usuario" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Contraseña</label>
-                    <input type="password" id="contraseña" class="form-control" placeholder="Ingrese contraseña" required>
-                </div>
-                <button type="submit" class="btn btn-warning w-100 fw-bold">Ingresar</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- SISTEMA PRINCIPAL -->
-    <div id="pantallaSistema" class="d-none">
-        <!-- ENCABEZADO -->
-        <header class="navbar navbar-dark bg-dark px-4 py-3 border-bottom border-secondary">
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-shop text-warning fs-3"></i>
-                <span class="fs-4 fw-bold text-white">SILPANCHERÍA POS</span>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <div class="text-end">
-                    <div id="lblNombreUsuario" class="fw-bold text-white">Usuario</div>
-                </div>
-                <button onclick="cerrarSesion()" class="btn btn-outline-danger btn-sm px-3 fw-bold">
-                    <i class="bi bi-box-arrow-right me-1"></i> Salir
-                </button>
-            </div>
-        </header>
-
-        <div class="container-fluid p-4">
-            <!-- NAVEGACIÓN -->
-            <ul class="nav nav-pills mb-4 gap-2 border-bottom border-secondary pb-3 flex-wrap" id="mainNav">
-                <li class="nav-item"><button class="nav-link active" id="tab-pos" onclick="cambiarModulo('pos')"><i class="bi bi-calculator me-2"></i>POS / Ventas</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-ventas" onclick="cambiarModulo('ventas')"><i class="bi bi-coin me-2"></i>Historial Ventas</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-productos" onclick="cambiarModulo('productos')"><i class="bi bi-box-seam me-2"></i>Productos</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-categorias" onclick="cambiarModulo('categorias')"><i class="bi bi-tags me-2"></i>Categorías</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-movimientos" onclick="cambiarModulo('movimientos')"><i class="bi bi-arrow-left-right me-2"></i>Movimientos</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-compras" onclick="cambiarModulo('compras')"><i class="bi bi-bag-fill me-2"></i>Compras</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-proveedores" onclick="cambiarModulo('proveedores')"><i class="bi bi-building me-2"></i>Proveedores</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-recetas" onclick="cambiarModulo('recetas')"><i class="bi bi-book me-2"></i>Recetas</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-cocineros" onclick="cambiarModulo('cocineros')"><i class="bi bi-person-arms-up me-2"></i>Cocineros</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-personas" onclick="cambiarModulo('personas')"><i class="bi bi-person-vcard me-2"></i>Personas</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-empleados" onclick="cambiarModulo('empleados')"><i class="bi bi-people-fill me-2"></i>Empleados</button></li>
-                <li class="nav-item"><button class="nav-link" id="tab-reportes" onclick="cambiarModulo('reportes')"><i class="bi bi-graph-up-arrow me-2"></i>Reportes</button></li>
-            </ul>
-
-            <!-- MÓDULO PRODUCTOS -->
-            <div id="sec-productos" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-box-seam me-2"></i>Gestión de Productos</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Stock</th><th>Mín.</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbProductos">
-                            <tr><td colspan="8" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO CATEGORÍAS -->
-            <div id="sec-categorias" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-tags me-2"></i>Gestión de Categorías</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbCategorias">
-                            <tr><td colspan="5" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO PERSONAS -->
-            <div id="sec-personas" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-person-vcard me-2"></i>Gestión de Personas</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbPersonas">
-                            <tr><td colspan="7" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO EMPLEADOS -->
-            <div id="sec-empleados" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-people-fill me-2"></i>Gestión de Empleados</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>#Empleado</th><th>Cargo</th><th>Departamento</th><th>Salario</th><th>Ingreso</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbEmpleados">
-                            <tr><td colspan="8" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO COCINEROS -->
-            <div id="sec-cocineros" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-person-arms-up me-2"></i>Gestión de Cocineros</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Empleado</th><th>Especialidad</th><th>Especializaciones</th><th>Certificación</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbCocineros">
-                            <tr><td colspan="7" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO VENTAS -->
-            <div id="sec-ventas" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-coin me-2"></i>Historial de Ventas</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>#Venta</th><th>Fecha</th><th>Total</th><th>Pago</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbVentas">
-                            <tr><td colspan="7" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO COMPRAS -->
-            <div id="sec-compras" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-bag-fill me-2"></i>Gestión de Compras</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbCompras">
-                            <tr><td colspan="5" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO PROVEEDORES -->
-            <div id="sec-proveedores" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-building me-2"></i>Gestión de Proveedores</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Dirección</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbProveedores">
-                            <tr><td colspan="7" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO RECETAS -->
-            <div id="sec-recetas" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-book me-2"></i>Gestión de Recetas</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Plato</th><th>Ingrediente</th><th>Cantidad</th><th>Unidad</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbRecetas">
-                            <tr><td colspan="6" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO MOVIMIENTOS -->
-            <div id="sec-movimientos" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-arrow-left-right me-2"></i>Movimientos de Stock</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbMovimientos">
-                            <tr><td colspan="6" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MÓDULO REPORTES -->
-            <div id="sec-reportes" class="modulo-seccion d-none">
-                <h4 class="mb-3"><i class="bi bi-graph-up-arrow me-2"></i>Reportes</h4>
-                <div class="card-dark p-3 table-responsive">
-                    <table class="table table-dark table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th><th>Título</th><th>Tipo</th><th>Fecha</th><th>Estado</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbReportes">
-                            <tr><td colspan="6" class="text-center">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
+</body>
 </html>

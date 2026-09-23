@@ -477,7 +477,6 @@
                     <h4 class="fw-bold text-white mb-0"><i class="bi bi-graph-up-arrow me-2 text-warning"></i>Métricas y Reportes Individuales</h4>
                 </div>
                 <div class="row g-4 mb-4">
-                    <!-- Tarjeta 1: Métricas -->
                     <div class="col-md-3">
                         <div class="card-dark p-3 text-center border-start border-4 border-warning h-100 d-flex flex-column justify-content-between">
                             <div>
@@ -489,7 +488,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Tarjeta 2: Ventas -->
                     <div class="col-md-3">
                         <div class="card-dark p-3 text-center border-start border-4 border-success h-100 d-flex flex-column justify-content-between">
                             <div>
@@ -501,7 +499,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Tarjeta 3: Almacén e Inventario -->
                     <div class="col-md-3">
                         <div class="card-dark p-3 text-center border-start border-4 border-primary h-100 d-flex flex-column justify-content-between">
                             <div>
@@ -513,7 +510,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Tarjeta 4: Mermas -->
                     <div class="col-md-3">
                         <div class="card-dark p-3 text-center border-start border-4 border-danger h-100 d-flex flex-column justify-content-between">
                             <div>
@@ -766,13 +762,11 @@ function obtenerFechaFormateada(item) {
             return obtenerFechaHoraActual();
 }
 
-// INICIALIZACIÓN
+// INICIALIZACIÓN: SIEMPRE MUESTRA LA PANTALLA DE LOGIN AL CARGAR
 window.onload = () => {
-            const sesionGuardada = localStorage.getItem('sys_sesion_activa');
-            if (sesionGuardada) {
-                usuarioActual = JSON.parse(sesionGuardada);
-                iniciarEntorno();
-            }
+            localStorage.removeItem('sys_sesion_activa');
+            document.getElementById('pantallaLogin').classList.remove('d-none');
+            document.getElementById('pantallaSistema').classList.add('d-none');
 };
 
 function setCredenciales(u, p) {
@@ -787,8 +781,9 @@ function ejecutarLogin(e) {
             const user = usuarios.find(x => x.usuario === u && x.password === p);
             if (user) {
                 usuarioActual = user;
-                localStorage.setItem('sys_sesion_activa', JSON.stringify(user));
                 document.getElementById('errorLogin').classList.add('d-none');
+                document.getElementById('txtUsuario').value = '';
+                document.getElementById('txtPassword').value = '';
                 iniciarEntorno();
             } else {
                 document.getElementById('errorLogin').classList.remove('d-none');
@@ -1204,7 +1199,7 @@ function exportarMetricasPDF() {
             doc.save(`Reporte_Metricas_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
 
-// 2. DESCARGAR HISTORIAL DE VENTAS (TOTALMENTE CENTRADO Y CON FECHA Y HORA)
+// 2. DESCARGAR HISTORIAL DE VENTAS
 function exportarVentasPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -1282,7 +1277,6 @@ function exportarMermasPDF() {
 }
     </script>
 
-    <!-- Script de API externa -->
     <script src="js/api.js"></script>
 
 </body>

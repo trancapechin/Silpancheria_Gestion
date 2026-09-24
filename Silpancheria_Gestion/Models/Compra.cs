@@ -1,4 +1,5 @@
-﻿using Supabase.Postgrest.Attributes;
+﻿using System;
+using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
 namespace SilpanchariaApp.Models
@@ -6,19 +7,25 @@ namespace SilpanchariaApp.Models
     [Table("compras")]
     public class Compra : BaseModel
     {
-        [PrimaryKey("id")]
+        [PrimaryKey("id", false)]
         public long Id { get; set; }
 
-        [Column("id_proveedor")]
-        public long IdProveedor { get; set; }
+        [Column("proveedor_id")]
+        public long? ProveedorId { get; set; }
 
-        [Column("fecha")]
-        public DateTime Fecha { get; set; }
+        [Column("almacen_id")]
+        public long? AlmacenId { get; set; }
 
-        [Column("estado")]
-        public string Estado { get; set; }
+        [Column("numero_factura")]
+        public string? NumeroFactura { get; set; }
+
+        [Column("fecha_compra")]
+        public DateTime FechaCompra { get; set; } = DateTime.UtcNow;
 
         [Column("total")]
         public decimal Total { get; set; }
+
+        [Column("estado")]
+        public string Estado { get; set; } = "COMPLETADO";
     }
 }

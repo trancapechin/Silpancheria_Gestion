@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Supabase.Postgrest.Attributes;
+﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
 namespace SilpanchariaApp.Models
@@ -30,5 +29,13 @@ namespace SilpanchariaApp.Models
 
         [Column("estado")]
         public string Estado { get; set; }
+
+        // NUEVO: código de barras / RFID
+        [Column("codigo_barras")]
+        public string CodigoBarras { get; set; }
+
+        // NUEVO: multi-almacén (del paso 2)
+        [Column("almacen_id")]
+        public long? AlmacenId { get; set; }
     }
 }

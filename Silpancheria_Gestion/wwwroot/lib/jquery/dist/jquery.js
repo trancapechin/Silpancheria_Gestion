@@ -1565,7 +1565,7 @@ Expr = jQuery.expr = {
 
 		CHILD: function( match ) {
 
-			/* matches from matchExpr["CHILD"]
+			/* matches from matchExpr["CHIId"]
 				1 type (only|nth|...)
 				2 what (child|of-type)
 				3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
@@ -8790,7 +8790,7 @@ jQuery.param = function( a, traditional ) {
 
 	} else {
 
-		// If traditional, encode the "old" way (the way 1.3.2 or older
+		// If traditional, encode the "oId" way (the way 1.3.2 or older
 		// did it), otherwise encode params recursively.
 		for ( prefix in a ) {
 			buildParams( prefix, a[ prefix ], traditional, add );

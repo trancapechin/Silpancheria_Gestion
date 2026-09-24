@@ -2,109 +2,104 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Auditoría & Reportes - Silpanchería</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría — Silpancharía</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/silpancharia.css" rel="stylesheet">
     <style>
         body {
-            background-color: #0f172a;
-            color: #fff;
+            background: var(--bg);
+            padding: 24px;
         }
 
-        .card-dark {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
+        .page-card {
+            max-width: 1100px;
+            margin: 0 auto;
         }
     </style>
 </head>
-<body class="p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
-        <div>
-            <h3 class="fw-bold mb-0 text-info"><i class="bi bi-file-earmark-bar-graph me-2"></i>Auditoría & Reportes (Solo Lectura)</h3>
-            <span class="text-secondary small" id="lblUsuario">Cargando...</span>
-        </div>
-        <button onclick="cerrarSesion()" class="btn btn-outline-danger btn-sm"><i class="bi bi-power"></i> Salir</button>
-    </div>
-
-    <div class="alert alert-secondary d-flex align-items-center" role="alert">
-        <i class="bi bi-lock-fill me-2 fs-5"></i>
-        <span><strong>Modo de Solo Lectura Activo:</strong> Todos los controles de edición y borrado han sido deshabilitados para proteger la integridad de los datos contables.</span>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card-dark p-3 text-center">
-                <span class="text-secondary small">Valor Total del Almacén</span>
-                <h3 class="fw-bold text-success my-1">12,450 Bs.</h3>
+<body>
+    <div class="page-card">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3" style="border-bottom:1px solid var(--border)">
+            <div>
+                <h3 class="fw-bold mb-0" style="color:var(--text)">
+                    <i class="bi bi-shield-check me-2" style="color:var(--primary)"></i>Auditoría
+                </h3>
+                <span class="text-muted small" id="lblUsuario">Cargando...</span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="index.html" class="btn btn-secondary-app btn-sm"><i class="bi bi-grid me-1"></i> Panel</a>
+                <button type="button" onclick="cerrarSesion()" class="btn btn-sm" style="border:1px solid var(--danger);color:var(--danger);border-radius:8px;background:#fff">
+                    <i class="bi bi-power"></i> Salir
+                </button>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card-dark p-3 text-center">
-                <span class="text-secondary small">Costo Adquisición Mes</span>
-                <h3 class="fw-bold text-warning my-1">4,200 Bs.</h3>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card-dark p-3 text-center">
-                <span class="text-secondary small">Mermas / Pérdidas</span>
-                <h3 class="fw-bold text-danger my-1">180 Bs.</h3>
-            </div>
-        </div>
-    </div>
 
-    <div class="card-dark p-3">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold mb-0">Historial de Movimientos Recientes</h5>
-            <button class="btn btn-outline-info btn-sm" onclick="alert('Descargando reporte en Excel/PDF...')"><i class="bi bi-download me-1"></i> Descargar Reporte</button>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="kpi-card">
+                    <div class="kpi-icon orange"><i class="bi bi-journal-text"></i></div>
+                    <div class="kpi-value" id="kpiMovs">—</div>
+                    <div class="kpi-label">Movimientos recientes</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card">
+                    <div class="kpi-icon yellow"><i class="bi bi-exclamation-triangle"></i></div>
+                    <div class="kpi-value" id="kpiAlertas">—</div>
+                    <div class="kpi-label">Alertas de stock</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card">
+                    <div class="kpi-icon green"><i class="bi bi-check2-all"></i></div>
+                    <div class="kpi-value">OK</div>
+                    <div class="kpi-label">Estado del sistema</div>
+                </div>
+            </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-dark table-striped align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Tipo</th>
-                        <th>Detalle</th>
-                        <th>Cantidad</th>
-                        <th>Usuario Responsable</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2026-02-15</td>
-                        <td><span class="badge bg-success">Entrada</span></td>
-                        <td>Carne de res</td>
-                        <td>+20 Kg</td>
-                        <td>Almacenero</td>
-                    </tr>
-                    <tr>
-                        <td>2026-02-15</td>
-                        <td><span class="badge bg-danger">Merma</span></td>
-                        <td>Papa podrida</td>
-                        <td>-2 Kg</td>
-                        <td>Jefe de Cocina</td>
-                    </tr>
-                    <tr>
-                        <td>2026-02-15</td>
-                        <td><span class="badge bg-info">Venta POS</span></td>
-                        <td>Silpancho Doble</td>
-                        <td>-1 Unidad</td>
-                        <td>Cajero</td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <div class="card-app mt-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-list-check"></i> Registro de auditoría</h5>
+                <p class="text-muted small mb-3">Consulta movimientos y cambios relevantes del inventario.</p>
+                <div class="table-responsive">
+                    <table class="table table-app">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                                <th>Detalle</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaAuditoria">
+                            <tr><td colspan="4" class="text-center text-muted py-4">Sin registros cargados (conecta a tu API de movimientos/logs).</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
+        <footer class="app-footer mt-4" style="border-radius:12px">
+            <div><strong>Silpancharía</strong> · Módulo Auditoría</div>
+            <div>© 2026 · Versión 1.0</div>
+        </footer>
     </div>
 
     <script>
-    const user = JSON.parse(localStorage.getItem('usuarioActivo'));
-    if (!user) window.location.href = 'index.html';
-    document.getElementById('lblUsuario').innerText = `Consultado por: ${user.usuario} (${user.rol})`;
+                const user = JSON.parse(localStorage.getItem('usuarioActivo') || 'null');
+                if (!user) {
+                    document.getElementById('lblUsuario').textContent = 'Sesión local / Auditoría';
+                } else {
+                    document.getElementById('lblUsuario').textContent = (user.nombre || user.name || 'Usuario') + ' · Auditoría';
+                }
 
-    function cerrarSesion() {
-      localStorage.removeItem('usuarioActivo');
-      window.location.href = 'index.html';
-    }
+                function cerrarSesion() {
+                    localStorage.removeItem('usuarioActivo');
+                    window.location.href = 'index.html';
+                }
     </script>
 </body>
 </html>

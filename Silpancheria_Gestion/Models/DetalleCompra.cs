@@ -6,14 +6,14 @@ namespace SilpanchariaApp.Models
     [Table("detalle_compra")]
     public class DetalleCompra : BaseModel
     {
-        [PrimaryKey("id")]
+        [PrimaryKey("id", false)]
         public long Id { get; set; }
 
-        [Column("id_compra")]
-        public long IdCompra { get; set; }
+        [Column("compra_id")]
+        public long CompraId { get; set; }
 
-        [Column("id_producto")]
-        public long IdProducto { get; set; }
+        [Column("producto_id")]
+        public long ProductoId { get; set; }
 
         [Column("cantidad")]
         public decimal Cantidad { get; set; }

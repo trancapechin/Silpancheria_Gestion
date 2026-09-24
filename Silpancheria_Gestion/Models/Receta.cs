@@ -9,16 +9,16 @@ namespace SilpanchariaApp.Models
         [PrimaryKey("id")]
         public long Id { get; set; }
 
-        [Column("id_plato")]
-        public long IdPlato { get; set; }
+        [Column("nombre")]
+        public string Nombre { get; set; } = string.Empty;
 
-        [Column("id_ingrediente")]
-        public long IdIngrediente { get; set; }
+        [Column("descripcion")]
+        public string? Descripcion { get; set; }
 
-        [Column("cantidad")]
-        public decimal Cantidad { get; set; }
+        [Column("precio")]
+        public decimal Precio { get; set; }
 
-        [Column("unidad_medida")]
-        public string UnidadMedida { get; set; }
+        [Column("estado")]
+        public string Estado { get; set; } = "ACTIVO";
     }
 }

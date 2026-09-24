@@ -6,25 +6,22 @@ namespace SilpanchariaApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProveedoresController : ControllerBase
+    public class MovimientosController : ControllerBase
     {
         private readonly SupabaseService _supabaseService;
 
-        public ProveedoresController(SupabaseService supabaseService)
+        public MovimientosController(SupabaseService supabaseService)
         {
             _supabaseService = supabaseService;
         }
 
-        // Si tu SupabaseService tiene una propiedad llamada 'Cliente' o 'Client', 
-        // úsala para acceder a la base de datos (ejemplo: _supabaseService.Cliente)
-
-        // GET: api/Proveedores
+        // GET: api/Movimientos
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var response = await _supabaseService.Cliente.From<Proveedor>().Get();
+                var response = await _supabaseService.Cliente.From<Movimiento>().Get();
                 return Ok(response.Models);
             }
             catch (Exception ex)
@@ -33,17 +30,17 @@ namespace SilpanchariaApp.Controllers
             }
         }
 
-        // GET: api/Proveedores/5
+        // GET: api/Movimientos/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id)
         {
             try
             {
-                var response = await _supabaseService.Cliente.From<Proveedor>()
-                    .Where(p => p.Id == id)
+                var response = await _supabaseService.Cliente.From<Movimiento>()
+                    .Where(m => m.Id == id)
                     .Single();
 
-                if (response == null) return NotFound(new { mensaje = "Proveedor no encontrado" });
+                if (response == null) return NotFound(new { mensaje = "Movimiento no encontrado" });
                 return Ok(response);
             }
             catch (Exception ex)
@@ -52,13 +49,13 @@ namespace SilpanchariaApp.Controllers
             }
         }
 
-        // POST: api/Proveedores
+        // POST: api/Movimientos
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Proveedor proveedor)
+        public async Task<IActionResult> Create([FromBody] Movimiento movimiento)
         {
             try
             {
-                var response = await _supabaseService.Cliente.From<Proveedor>().Insert(proveedor);
+                var response = await _supabaseService.Cliente.From<Movimiento>().Insert(movimiento);
                 var nuevo = response.Models.FirstOrDefault();
                 return Ok(nuevo);
             }
@@ -68,19 +65,19 @@ namespace SilpanchariaApp.Controllers
             }
         }
 
-        // PUT: api/Proveedores/5
+        // PUT: api/Movimientos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] Proveedor proveedor)
+        public async Task<IActionResult> Update(long id, [FromBody] Movimiento movimiento)
         {
             try
             {
-                proveedor.Id = id;
-                var response = await _supabaseService.Cliente.From<Proveedor>()
-                    .Where(p => p.Id == id)
-                    .Update(proveedor);
+                movimiento.Id = id;
+                var response = await _supabaseService.Cliente.From<Movimiento>()
+                    .Where(m => m.Id == id)
+                    .Update(movimiento);
 
                 var actualizado = response.Models.FirstOrDefault();
-                if (actualizado == null) return NotFound(new { mensaje = "Proveedor no encontrado para actualizar" });
+                if (actualizado == null) return NotFound(new { mensaje = "Movimiento no encontrado para actualizar" });
 
                 return Ok(actualizado);
             }
@@ -90,17 +87,17 @@ namespace SilpanchariaApp.Controllers
             }
         }
 
-        // DELETE: api/Proveedores/5
+        // DELETE: api/Movimientos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
             try
             {
-                await _supabaseService.Cliente.From<Proveedor>()
-                    .Where(p => p.Id == id)
+                await _supabaseService.Cliente.From<Movimiento>()
+                    .Where(m => m.Id == id)
                     .Delete();
 
-                return Ok(new { mensaje = "Proveedor eliminado correctamente" });
+                return Ok(new { mensaje = "Movimiento eliminado correctamente" });
             }
             catch (Exception ex)
             {

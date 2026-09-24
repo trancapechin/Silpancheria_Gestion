@@ -8,202 +8,100 @@ namespace SilpanchariaApp.Controllers
     [Route("api/[controller]")]
     public class RecetasController : ControllerBase
     {
-        private readonly SupabaseService _supabase;
+        private readonly SupabaseService _supabaseService;
 
-        public RecetasController(SupabaseService supabase)
+        public RecetasController(SupabaseService supabaseService)
         {
-            _supabase = supabase;
+            _supabaseService = supabaseService;
         }
 
-        // GET: api/recetas
+        // GET: api/Recetas
         [HttpGet]
-        public async Task<IActionResult> ObtenerRecetas()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var respuesta = await _supabase.Cliente
-                    .From<Receta>()
-                    .Get();
-
-                return Ok(respuesta.Models);
+                var response = await _supabaseService.Cliente.From<Receta>().Get();
+                return Ok(response.Models);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error al obtener las recetas",
-                    error = ex.Message
-                });
+                return StatusCode(500, new { mensaje = ex.Message });
             }
         }
 
-        // GET: api/Recetas/1
+        // GET: api/Recetas/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerReceta(long id)
+        public async Task<IActionResult> GetById(long id)
         {
             try
             {
-                var respuesta = await _supabase.Cliente
-                    .From<Receta>()
+                var response = await _supabaseService.Cliente.From<Receta>()
                     .Where(r => r.Id == id)
-                    .Get();
+                    .Single();
 
-                var receta = respuesta.Models.FirstOrDefault();
-
-                if (receta == null)
-                {
-                    return NotFound(new
-                    {
-                        mensaje = "Receta no encontrada"
-                    });
-                }
-
-                return Ok(receta);
+                if (response == null) return NotFound(new { mensaje = "Receta no encontrada" });
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error al obtener la receta",
-                    error = ex.Message
-                });
+                return StatusCode(500, new { mensaje = ex.Message });
             }
         }
 
-        // POST: api/recetas
+        // POST: api/Recetas
         [HttpPost]
-        public async Task<IActionResult> CrearReceta(
-            [FromBody] Receta receta)
+        public async Task<IActionResult> Create([FromBody] Receta receta)
         {
             try
             {
-                var respuesta = await _supabase.Cliente
-                    .From<Receta>()
-                    .Insert(receta);
-
-                return Ok(respuesta.Models.FirstOrDefault());
+                var response = await _supabaseService.Cliente.From<Receta>().Insert(receta);
+                var nueva = response.Models.FirstOrDefault();
+                return Ok(nueva);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error al crear la receta",
-                    error = ex.Message
-                });
+                return BadRequest(new { mensaje = ex.Message });
             }
         }
 
-        // PUT: api/Recetas/1
+        // PUT: api/Recetas/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> ActualizarReceta(
-            long id,
-            [FromBody] Receta receta)
+        public async Task<IActionResult> Update(long id, [FromBody] Receta receta)
         {
             try
             {
-                var respuesta = await _supabase.Cliente
-                    .From<Receta>()
-                    .Where(r => r.Id == id)
-                    .Get();
-
-                var recetaExistente = respuesta.Models.FirstOrDefault();
-
-                if (recetaExistente == null)
-                {
-                    return NotFound(new
-                    {
-                        mensaje = "Receta no encontrada"
-                    });
-                }
-
                 receta.Id = id;
-
-                var resultado = await _supabase.Cliente
-                    .From<Receta>()
+                var response = await _supabaseService.Cliente.From<Receta>()
+                    .Where(r => r.Id == id)
                     .Update(receta);
 
-                return Ok(resultado.Models.FirstOrDefault());
+                var actualizada = response.Models.FirstOrDefault();
+                if (actualizada == null) return NotFound(new { mensaje = "Receta no encontrada para actualizar" });
+
+                return Ok(actualizada);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error al actualizar la receta",
-                    error = ex.Message
-                });
+                return BadRequest(new { mensaje = ex.Message });
             }
         }
 
-        // PUT: api/recetas/preparar/5?cantidad=5
-        [HttpPut("preparar/{idPlato}")]
-        public async Task<IActionResult> PrepararPlato(
-            long idPlato,
-            [FromQuery] decimal cantidad)
-        {
-            try
-            {
-                var parametros = new Dictionary<string, object>
-                {
-                    { "p_id_plato", idPlato },
-                    { "p_cantidad_platos", cantidad }
-                };
-
-                var resultado = await _supabase.Cliente
-                    .Rpc("preparar_plato", parametros);
-
-                return Ok(new
-                {
-                    mensaje = resultado
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    mensaje = "No se pudo preparar el plato",
-                    error = ex.Message
-                });
-            }
-        }
-
-        // DELETE: api/Recetas/1
+        // DELETE: api/Recetas/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> EliminarReceta(long id)
+        public async Task<IActionResult> Delete(long id)
         {
             try
             {
-                var respuesta = await _supabase.Cliente
-                    .From<Receta>()
-                    .Where(r => r.Id == id)
-                    .Get();
-
-                var receta = respuesta.Models.FirstOrDefault();
-
-                if (receta == null)
-                {
-                    return NotFound(new
-                    {
-                        mensaje = "Receta no encontrada"
-                    });
-                }
-
-                await _supabase.Cliente
-                    .From<Receta>()
+                await _supabaseService.Cliente.From<Receta>()
                     .Where(r => r.Id == id)
                     .Delete();
 
-                return Ok(new
-                {
-                    mensaje = "Receta eliminada correctamente"
-                });
+                return Ok(new { mensaje = "Receta eliminada correctamente" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error al eliminar la receta",
-                    error = ex.Message
-                });
+                return BadRequest(new { mensaje = ex.Message });
             }
         }
     }

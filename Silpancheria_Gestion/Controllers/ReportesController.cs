@@ -8,42 +8,39 @@ namespace SilpanchariaApp.Controllers
     [Route("api/[controller]")]
     public class ReportesController : ControllerBase
     {
-        private readonly SupabaseService _supabase;
+        private readonly SupabaseService _supabaseService;
 
-        public ReportesController(SupabaseService supabase)
+        public ReportesController(SupabaseService supabaseService)
         {
-            _supabase = supabase;
+            _supabaseService = supabaseService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ObtenerReportes()
+        // GET: api/Reportes/resumen
+        [HttpGet("resumen")]
+        public async Task<IActionResult> GetResumen()
         {
             try
             {
-                var respuesta = await _supabase.Cliente
-                    .From<Reporte>()
-                    .Get();
-                return Ok(respuesta.Models);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { mensaje = "Error al obtener reportes", error = ex.Message });
-            }
-        }
+                var compras = await _supabaseService.Cliente.From<Compra>().Get();
+                var proveedores = await _supabaseService.Cliente.From<Proveedor>().Get();
+                var recetas = await _supabaseService.Cliente.From<Receta>().Get();
+                var movimientos = await _supabaseService.Cliente.From<Movimiento>().Get();
 
-        [HttpPost]
-        public async Task<IActionResult> CrearReporte([FromBody] Reporte reporte)
-        {
-            try
-            {
-                var respuesta = await _supabase.Cliente
-                    .From<Reporte>()
-                    .Insert(reporte);
-                return Created("", respuesta.Models?.FirstOrDefault());
+                var resumen = new ReporteResumenDto
+                {
+                    TotalCompras = compras.Models.Count,
+                    MontoTotalCompras = compras.Models.Sum(c => c.Total),
+                    TotalProveedores = proveedores.Models.Count,
+                    TotalRecetas = recetas.Models.Count,
+                    TotalMovimientos = movimientos.Models.Count,
+                    FechaGeneracion = DateTime.Now
+                };
+
+                return Ok(resumen);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { mensaje = "Error al crear reporte", error = ex.Message });
+                return StatusCode(500, new { mensaje = ex.Message });
             }
         }
     }

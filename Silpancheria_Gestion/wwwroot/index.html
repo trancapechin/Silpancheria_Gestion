@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SILPANCHARÍA — Sistema de Gestión de Inventario</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <!-- Chart.js para los gráficos de inventario -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- jsPDF y jsPDF-AutoTable para reportes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.autotable.min.js"></script>
@@ -932,155 +930,342 @@
         <span class="fab-asistente-label">Hablar</span>
     </button>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="api.js"></script>
-    <script src="js/asistente.js"></script>
-</html>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="api.js"></script>
-<script>
-                                                        function toggleSidebar() {
-                                                            document.getElementById('sidebar').classList.toggle('open');
-                                                            document.getElementById('sidebarOverlay').classList.toggle('show');
-                                                        }
+    <script>
+                function toggleSidebar() {
+                    document.getElementById('sidebar').classList.toggle('open');
+                    document.getElementById('sidebarOverlay').classList.toggle('show');
+                }
 
-                                                        function cambiarModulo(nombreModulo) {
-                                                            document.querySelectorAll('.modulo-seccion').forEach(s => s.classList.remove('activo'));
-                                                            document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                function cambiarModulo(nombreModulo) {
+                    document.querySelectorAll('.modulo-seccion').forEach(s => s.classList.remove('activo'));
+                    document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+                    const seccion = document.getElementById('modulo-' + nombreModulo);
+                    if (seccion) seccion.classList.add('activo');
+                    const nav = document.querySelector(`.sidebar .nav-link[data-modulo="${nombreModulo}"]`);
+                    if (nav) nav.classList.add('active');
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebarOverlay').classList.remove('show');
+                    if (nombreModulo === 'dashboard') cargarDashboard();
+                    if (nombreModulo === 'productos' && typeof cargarProductos === 'function') cargarProductos();
+                    if (nombreModulo === 'categorias' && typeof cargarCategorias === 'function') cargarCategorias();
+                    if (nombreModulo === 'almacenes' && typeof cargarAlmacenes === 'function') cargarAlmacenes();
+                    if (nombreModulo === 'personas' && typeof cargarPersonas === 'function') cargarPersonas();
+                    if (nombreModulo === 'empleados' && typeof cargarEmpleados === 'function') cargarEmpleados();
+                    if (nombreModulo === 'compras' && typeof cargarCompras === 'function') cargarCompras();
+                    if (nombreModulo === 'proveedores' && typeof cargarProveedores === 'function') cargarProveedores();
+                    if (nombreModulo === 'recetas' && typeof cargarRecetas === 'function') cargarRecetas();
+                    if (nombreModulo === 'movimientos') {
+                        if (typeof cargarMovimientos === 'function') cargarMovimientos();
+                        else if (typeof cargarMovimientosStock === 'function') cargarMovimientosStock();
+                    }
+                    if (nombreModulo === 'reportes' && typeof cargarVistaPreviaReporte === 'function') cargarVistaPreviaReporte();
+                }
 
-                                                            const seccion = document.getElementById('modulo-' + nombreModulo);
-                                                            if (seccion) seccion.classList.add('activo');
+                async function cargarDashboard() {
+                    try {
+                        const resp = await fetch(typeof ENDPOINTS !== 'undefined' ? ENDPOINTS.productos : '/api/Productos');
+                        if (!resp.ok) throw new Error('No se pudo cargar productos');
+                        const lista = await resp.json();
+                        const total = lista.length;
+                        let normal = 0, bajo = 0, agotado = 0;
+                        const alertas = [];
+                        lista.forEach(p => {
+                            const stock = Number(p.stockActual ?? p.stock ?? 0);
+                            const min = Number(p.stockMinimo ?? p.stock_minimo ?? 0);
+                            if (stock <= 0) { agotado++; alertas.push({ p, stock, min, estado: 'Agotado' }); }
+                            else if (stock <= min) { bajo++; alertas.push({ p, stock, min, estado: 'Bajo' }); }
+                            else normal++;
+                        });
+                        document.getElementById('kpiTotal').textContent = total;
+                        document.getElementById('kpiNormal').textContent = normal;
+                        document.getElementById('kpiBajo').textContent = bajo;
+                        document.getElementById('kpiAgotado').textContent = agotado;
 
-                                                            const nav = document.querySelector(`.sidebar .nav-link[data-modulo="${nombreModulo}"]`);
-                                                            if (nav) nav.classList.add('active');
+                        const canvasDashboard = document.getElementById('graficoInventario');
+                        if (canvasDashboard && typeof Chart !== 'undefined') {
+                            if (window.graficoDashboardInventario) {
+                                window.graficoDashboardInventario.destroy();
+                            }
+                            window.graficoDashboardInventario = new Chart(canvasDashboard.getContext('2d'), {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['Stock Normal', 'Stock Bajo', 'Agotados'],
+                                    datasets: [{
+                                        data: [normal, bajo, agotado],
+                                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                                        borderWidth: 0
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { position: 'bottom' } }
+                                }
+                            });
+                        }
 
-                                                            // Cerrar sidebar en móvil
-                                                            document.getElementById('sidebar').classList.remove('open');
-                                                            document.getElementById('sidebarOverlay').classList.remove('show');
+                        const tbody = document.getElementById('tablaAlertas');
+                        if (!alertas.length) {
+                            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No hay productos con stock bajo o agotado</td></tr>';
+                        } else {
+                            tbody.innerHTML = alertas.slice(0, 12).map(({ p, stock, min, estado }) => {
+                                const unidad = p.unidadMedida || p.unidad_medida || '';
+                                const badge = estado === 'Agotado' ? 'badge-agotado' : 'badge-bajo';
+                                return `<tr>
+                                    <td><strong>${typeof escapeHTML === 'function' ? escapeHTML(p.nombre) : p.nombre}</strong></td>
+                                    <td>${stock} ${unidad}</td>
+                                    <td>${min} ${unidad}</td>
+                                    <td><span class="badge-status ${badge}">${estado}</span></td>
+                                </tr>`;
+                            }).join('');
+                        }
+                    } catch (e) {
+                        document.getElementById('kpiTotal').textContent = '—';
+                        document.getElementById('tablaAlertas').innerHTML =
+                            `<tr><td colspan="4" class="text-center text-danger py-3">${e.message}</td></tr>`;
+                    }
+                }
 
-                                                            if (nombreModulo === 'dashboard') cargarDashboard();
-                                                            if (nombreModulo === 'productos' && typeof cargarProductos === 'function') cargarProductos();
-                                                            if (nombreModulo === 'categorias' && typeof cargarCategorias === 'function') cargarCategorias();
-                                                            if (nombreModulo === 'almacenes' && typeof cargarAlmacenes === 'function') cargarAlmacenes();
-                                                            if (nombreModulo === 'personas' && typeof cargarPersonas === 'function') cargarPersonas();
-                                                            if (nombreModulo === 'empleados' && typeof cargarEmpleados === 'function') cargarEmpleados();
-                                                            if (nombreModulo === 'compras' && typeof cargarCompras === 'function') cargarCompras();
-                                                            if (nombreModulo === 'proveedores' && typeof cargarProveedores === 'function') cargarProveedores();
-                                                            if (nombreModulo === 'recetas' && typeof cargarRecetas === 'function') cargarRecetas();
-                                                            if (nombreModulo === 'movimientos') {
-                                                                if (typeof cargarMovimientos === 'function') cargarMovimientos();
-                                                                else if (typeof cargarMovimientosStock === 'function') cargarMovimientosStock();
-                                                            }
-                                                            if (nombreModulo === 'reportes' && typeof cargarVistaPreviaReporte === 'function') cargarVistaPreviaReporte();
-                                                        }
+                function filtrarTablaProductos() {
+                    const texto = (document.getElementById('filtroProdTexto')?.value || '').toLowerCase();
+                    const tipo = document.getElementById('filtroProdTipo')?.value || '';
+                    const estado = document.getElementById('filtroProdEstado')?.value || '';
+                    const rows = document.querySelectorAll('#tablaProductos tr');
+                    rows.forEach(tr => {
+                        if (tr.cells.length < 4) return;
+                        const nombre = (tr.cells[1]?.textContent || '').toLowerCase();
+                        const tipoCell = (tr.cells[2]?.textContent || '').toLowerCase();
+                        const estadoCell = (tr.cells[6]?.textContent || '').toUpperCase();
+                        const okTexto = !texto || nombre.includes(texto);
+                        const okTipo = !tipo || tipoCell.includes(tipo.toLowerCase()) ||
+                            (tipo === 'Insumo' && (tipoCell.includes('insumo') || tipoCell.includes('ingrediente')));
+                        const okEstado = !estado || estadoCell.includes(estado);
+                        tr.style.display = (okTexto && okTipo && okEstado) ? '' : 'none';
+                    });
+                }
 
-                                                        async function cargarDashboard() {
-                                                            try {
-                                                                const resp = await fetch(typeof ENDPOINTS !== 'undefined' ? ENDPOINTS.productos : '/api/Productos');
-                                                                if (!resp.ok) throw new Error('No se pudo cargar productos');
-                                                                const lista = await resp.json();
-                                                                const total = lista.length;
-                                                                let normal = 0, bajo = 0, agotado = 0;
-                                                                const alertas = [];
+                document.addEventListener('DOMContentLoaded', () => {
+                    cambiarModulo('dashboard');
+                });
+    </script>
 
-                                                                lista.forEach(p => {
-                                                                    const stock = Number(p.stockActual ?? p.stock ?? 0);
-                                                                    const min = Number(p.stockMinimo ?? p.stock_minimo ?? 0);
-                                                                    if (stock <= 0) { agotado++; alertas.push({ p, stock, min, estado: 'Agotado' }); }
-                                                                    else if (stock <= min) { bajo++; alertas.push({ p, stock, min, estado: 'Bajo' }); }
-                                                                    else normal++;
-                                                                });
+    <style>
+        #btnAsistenteVoz {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 56px;
+            padding: 0 18px 0 16px;
+            border: none;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #F97316, #EA580C);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.45);
+            cursor: pointer;
+            font-family: inherit;
+        }
 
-                                                                document.getElementById('kpiTotal').textContent = total;
-                                                                document.getElementById('kpiNormal').textContent = normal;
-                                                                document.getElementById('kpiBajo').textContent = bajo;
-                                                                document.getElementById('kpiAgotado').textContent = agotado;
-                                                                // Actualizar el gráfico del Dashboard
-                                                                const canvasDashboard = document.getElementById('graficoInventario');
-                                                                if (canvasDashboard && typeof Chart !== 'undefined') {
-                                                                    if (window.graficoDashboardInventario) {
-                                                                        window.graficoDashboardInventario.destroy();
-                                                                    }
-                                                                    window.graficoDashboardInventario = new Chart(canvasDashboard.getContext('2d'), {
-                                                                        type: 'doughnut',
-                                                                        data: {
-                                                                            labels: ['Stock Normal', 'Stock Bajo', 'Agotados'],
-                                                                            datasets: [{
-                                                                                data: [normal, bajo, agotado],
-                                                                                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                                                                                borderWidth: 0
-                                                                            }]
-                                                                        },
-                                                                        options: {
-                                                                            responsive: true,
-                                                                            maintainAspectRatio: false,
-                                                                            plugins: { legend: { position: 'bottom' } }
-                                                                        }
-                                                                    });
-                                                                }
+            #btnAsistenteVoz.escuchando {
+                background: linear-gradient(135deg, #EF4444, #DC2626);
+                animation: pulsoMic 1.2s ease-in-out infinite;
+            }
 
+        @keyframes pulsoMic {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+            }
 
-                                                                const tbody = document.getElementById('tablaAlertas');
-                                                                if (!alertas.length) {
-                                                                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No hay productos con stock bajo o agotado</td></tr>';
-                                                                } else {
-                                                                    tbody.innerHTML = alertas.slice(0, 12).map(({ p, stock, min, estado }) => {
-                                                                        const unidad = p.unidadMedida || p.unidad_medida || '';
-                                                                        const badge = estado === 'Agotado' ? 'badge-agotado' : 'badge-bajo';
-                                                                        return `<tr>
-                                                                            <td><strong>${escapeHTML ? escapeHTML(p.nombre) : p.nombre}</strong></td>
-                                                                            <td>${stock} ${unidad}</td>
-                                                                            <td>${min} ${unidad}</td>
-                                                                            <td><span class="badge-status ${badge}">${estado}</span></td>
-                                                                        </tr>`;
-                                                                    }).join('');
-                                                                }
-                                                            } catch (e) {
-                                                                document.getElementById('kpiTotal').textContent = '—';
-                                                                document.getElementById('tablaAlertas').innerHTML =
-                                                                    `<tr><td colspan="4" class="text-center text-danger py-3">${e.message}</td></tr>`;
-                                                            }
-                                                        }
+            50% {
+                box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+            }
+        }
 
-                                                        function filtrarTablaProductos() {
-                                                            const texto = (document.getElementById('filtroProdTexto')?.value || '').toLowerCase();
-                                                            const tipo = document.getElementById('filtroProdTipo')?.value || '';
-                                                            const estado = document.getElementById('filtroProdEstado')?.value || '';
-                                                            const rows = document.querySelectorAll('#tablaProductos tr');
-                                                            rows.forEach(tr => {
-                                                                if (tr.cells.length < 4) return;
-                                                                const nombre = (tr.cells[1]?.textContent || '').toLowerCase();
-                                                                const tipoCell = (tr.cells[2]?.textContent || '').toLowerCase();
-                                                                const estadoCell = (tr.cells[6]?.textContent || '').toUpperCase();
-                                                                const okTexto = !texto || nombre.includes(texto);
-                                                                const okTipo = !tipo || tipoCell.includes(tipo.toLowerCase()) ||
-                                                                    (tipo === 'Insumo' && (tipoCell.includes('insumo') || tipoCell.includes('ingrediente')));
-                                                                const okEstado = !estado || estadoCell.includes(estado);
-                                                                tr.style.display = (okTexto && okTipo && okEstado) ? '' : 'none';
-                                                            });
-                                                        }
+        #asistenteToast {
+            position: fixed;
+            bottom: 100px;
+            right: 28px;
+            max-width: 320px;
+            padding: 12px 16px;
+            background: #0F172A;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
 
-                                                        document.addEventListener('DOMContentLoaded', () => {
-                                                            cambiarModulo('dashboard');
-                                                        });
+            #asistenteToast.show {
+                display: block;
+            }
 
-</script>
-<!-- Cargar primero la librería del gráfico -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        @media (max-width: 576px) {
+            #btnAsistenteVoz {
+                bottom: 16px;
+                right: 12px;
+                width: 56px;
+                height: 56px;
+                padding: 0;
+                justify-content: center;
+                border-radius: 50%;
+            }
 
-<!-- Cargar tu script con la ruta correcta -->
-<script src="api.js"></script>
-<script src="js/asistente.js"></script>
-    </body>
-<!-- Botón flotante micrófono (abajo derecha) -->
-<button type="button" id="btnAsistenteVoz" title="Asistente de voz"
-        style="position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;align-items:center;gap:10px;height:56px;padding:0 18px 0 16px;border:none;border-radius:28px;background:linear-gradient(135deg,#F97316,#EA580C);color:#fff;font-weight:600;font-size:0.9rem;box-shadow:0 4px 16px rgba(249,115,22,0.45);cursor:pointer;">
-    <i class="bi bi-mic-fill" style="font-size:1.35rem;"></i>
-    <span class="fab-asistente-label">Hablar</span>
-</button>
+                #btnAsistenteVoz .fab-asistente-label {
+                    display: none;
+                }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="api.js"></script>
-<script src="js/asistente.js"></script>
-</html>
+            #asistenteToast {
+                left: 12px;
+                right: 12px;
+                bottom: 84px;
+                max-width: none;
+            }
+        }
+    </style>
+
+    <button type="button" id="btnAsistenteVoz" title="Asistente de voz" aria-label="Asistente de voz">
+        <i class="bi bi-mic-fill" style="font-size:1.35rem;"></i>
+        <span class="fab-asistente-label">Hablar</span>
+    </button>
+    <div id="asistenteToast"></div>
+
+    <script>
+(function () {
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            var recognition = null;
+            var escuchando = false;
+
+            function toast(msg) {
+                var el = document.getElementById('asistenteToast');
+                if (el) {
+                    el.textContent = msg;
+                    el.classList.add('show');
+                    clearTimeout(el._t);
+                    el._t = setTimeout(function () { el.classList.remove('show'); }, 4000);
+                }
+                console.log('[Asistente]', msg);
+            }
+
+            function setEscuchando(on) {
+                escuchando = on;
+                var btn = document.getElementById('btnAsistenteVoz');
+                if (!btn) return;
+                var label = btn.querySelector('.fab-asistente-label');
+                if (on) {
+                    btn.classList.add('escuchando');
+                    if (label) label.textContent = 'Escuchando…';
+                } else {
+                    btn.classList.remove('escuchando');
+                    if (label) label.textContent = 'Hablar';
+                }
+            }
+
+            function irA(modulo) {
+                if (typeof cambiarModulo === 'function') {
+                    cambiarModulo(modulo);
+                    toast('Abriendo: ' + modulo);
+                } else {
+                    toast('Módulo: ' + modulo);
+                }
+            }
+
+            function procesar(texto) {
+                var t = (texto || '').toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+                toast('Escuché: ' + texto);
+
+                var pares = [
+                    ['dashboard', 'dashboard'], ['inicio', 'dashboard'],
+                    ['productos', 'productos'], ['producto', 'productos'],
+                    ['categorias', 'categorias'], ['categoria', 'categorias'],
+                    ['almacenes', 'almacenes'], ['almacen', 'almacenes'],
+                    ['personas', 'personas'], ['empleados', 'empleados'],
+                    ['compras', 'compras'], ['proveedores', 'proveedores'],
+                    ['recetas', 'recetas'], ['movimientos', 'movimientos'],
+                    ['reportes', 'reportes'], ['reporte', 'reportes']
+                ];
+                for (var i = 0; i < pares.length; i++) {
+                    if (t.indexOf(pares[i][0]) !== -1) {
+                        irA(pares[i][1]);
+                        return;
+                    }
+                }
+                toast('No reconocí el comando. Di: productos, dashboard, reportes...');
+            }
+
+            function iniciar() {
+                toast('Clic recibido');
+
+                if (!SpeechRecognition) {
+                    alert('Este navegador no soporta voz. Usa Chrome o Edge actualizado.');
+                    return;
+                }
+
+                if (escuchando && recognition) {
+                    try { recognition.stop(); } catch (e) {}
+                    setEscuchando(false);
+                    toast('Detenido');
+                    return;
+                }
+
+                recognition = new SpeechRecognition();
+                recognition.lang = 'es-ES';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = function () {
+                    setEscuchando(true);
+                    toast('Escuchando… habla ahora');
+                };
+                recognition.onresult = function (ev) {
+                    procesar(ev.results[0][0].transcript);
+                };
+                recognition.onerror = function (ev) {
+                    setEscuchando(false);
+                    var map = {
+                        'not-allowed': 'Micrófono bloqueado. Clic en el candado de la URL → Permitir micrófono.',
+                        'no-speech': 'No se detectó voz. Intenta de nuevo.',
+                        'network': 'Error de red del servicio de voz.',
+                        'aborted': 'Cancelado'
+                    };
+                    var msg = map[ev.error] || ('Error: ' + ev.error);
+                    toast(msg);
+                    if (ev.error === 'not-allowed') alert(msg);
+                };
+                recognition.onend = function () {
+                    setEscuchando(false);
+                };
+
+                try {
+                    recognition.start();
+                } catch (e) {
+                    setEscuchando(false);
+                    toast('Error: ' + e.message);
+                    alert('Error micrófono: ' + e.message);
+                }
+            }
+
+            var btn = document.getElementById('btnAsistenteVoz');
+            if (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    iniciar();
+                });
+                console.log('Asistente INLINE listo');
+            } else {
+                console.error('No existe el botón #btnAsistenteVoz');
+            }
+})();
+    </script>
+</body>
 </html>

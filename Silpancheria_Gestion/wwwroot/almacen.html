@@ -100,12 +100,15 @@
     </div>
 
     <script>
-                const user = JSON.parse(localStorage.getItem('usuarioActivo') || 'null');
-                if (!user) {
-                    document.getElementById('lblUsuario').textContent = 'Sesión local / Almacén';
-                } else {
-                    document.getElementById('lblUsuario').textContent = (user.nombre || user.name || 'Usuario') + ' · Almacén';
-                }
+const user = JSON.parse(localStorage.getItem('usuarioActivo') || 'null');
+const lbl = document.getElementById('lblUsuario');
+if (lbl) {
+    if (!user) {
+        lbl.textContent = 'Sesión local / Almacén';
+    } else {
+        lbl.textContent = (user.nombre || user.name || 'Usuario') + ' · Almacén';
+    }
+}
 
                 function cerrarSesion() {
                     localStorage.removeItem('usuarioActivo');

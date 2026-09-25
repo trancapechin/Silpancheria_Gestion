@@ -137,11 +137,12 @@
             console.error('No se encontró #btnAsistenteVoz');
             return;
         }
-        btn.onclick = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+
+        // Usamos addEventListener que es 100% compatible con toques de celular
+        btn.addEventListener('click', function () {
             iniciar();
-        };
+        });
+
         console.log('Asistente de voz listo');
     }
 

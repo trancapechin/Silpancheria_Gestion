@@ -748,3 +748,124 @@ textarea.form-control {
     background: #334155;
     border-radius: 4px;
 }
+/* ---------- ASISTENTE DE VOZ — botón flotante abajo derecha ---------- */
+.fab-asistente {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 56px;
+    height: 56px;
+    padding: 0 18px 0 16px;
+    border: none;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.45), 0 2px 6px rgba(15, 23, 42, 0.12);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+    .fab-asistente i {
+        font-size: 1.35rem;
+        line-height: 1;
+    }
+
+.fab-asistente-label {
+    letter-spacing: 0.02em;
+}
+
+.fab-asistente:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.55), 0 3px 8px rgba(15, 23, 42, 0.15);
+    background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
+}
+
+.fab-asistente:active {
+    transform: translateY(0);
+}
+
+.fab-asistente.escuchando {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+    animation: pulso-mic 1.2s ease-in-out infinite;
+}
+
+@keyframes pulso-mic {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+    }
+}
+
+.fab-asistente:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.asistente-toast {
+    position: fixed;
+    bottom: 100px;
+    right: 28px;
+    max-width: 340px;
+    padding: 12px 16px;
+    background: #0F172A;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+    z-index: 1051;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+}
+
+    .asistente-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .asistente-toast.warn {
+        background: #92400e;
+    }
+
+    .asistente-toast.error {
+        background: #DC2626;
+    }
+
+    .asistente-toast.info {
+        background: #1e3a5f;
+    }
+
+@media (max-width: 575.98px) {
+    .fab-asistente {
+        bottom: 20px;
+        right: 16px;
+        padding: 0;
+        width: 56px;
+        justify-content: center;
+    }
+
+    .fab-asistente-label {
+        display: none;
+    }
+
+    .asistente-toast {
+        right: 16px;
+        left: 16px;
+        max-width: none;
+        bottom: 90px;
+    }
+}

@@ -1236,3 +1236,47 @@ if ('serviceWorker' in navigator) {
             .catch((err) => console.error('Error registrando SW:', err));
     });
 }
+// ==========================================
+// 11. REGISTRO DE SERVICE WORKER Y PWA
+// ==========================================
+let deferredPrompt = null;
+
+// Registro del Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('Service Worker registrado'))
+            .catch((err) => console.error('Error registrando SW:', err));
+    });
+}
+
+// Escuchar el evento de instalación PWA
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Evitar que el navegador muestre su banner automático por defecto
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Hacer visible el botón de descarga
+    const btnInstalar = document.getElementById('btnInstalarApp');
+    if (btnInstalar) {
+        btnInstalar.style.display = 'inline-flex';
+
+        btnInstalar.onclick = async () => {
+            if (!deferredPrompt) return;
+            // Desplegar la ventana nativa de instalación
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`Resultado de la instalación: ${outcome}`);
+            deferredPrompt = null;
+            btnInstalar.style.display = 'none';
+        };
+    }
+});
+
+// Ocultar el botón si la app ya fue instalada en el dispositivo
+window.addEventListener('appinstalled', () => {
+    console.log('PWA instalada con éxito');
+    const btnInstalar = document.getElementById('btnInstalarApp');
+    if (btnInstalar) btnInstalar.style.display = 'none';
+    deferredPrompt = null;
+});

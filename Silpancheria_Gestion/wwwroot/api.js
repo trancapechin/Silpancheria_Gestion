@@ -116,7 +116,7 @@ async function cargarProductos() {
 
         if (!lista || lista.length === 0) {
             tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">Sin productos registrados</td></tr>';
-            renderizarGraficoInventario(0, 0, 0);
+            //renderizarGraficoInventario(0, 0, 0);
             return;
         }
 
@@ -129,7 +129,7 @@ async function cargarProductos() {
             else normales++;
         });
 
-        renderizarGraficoInventario(normales, bajos, agotados);
+        //renderizarGraficoInventario(normales, bajos, agotados);
 
         tbody.innerHTML = lista.map(p => {
             const stock = p.stockActual ?? p.stock ?? 0;

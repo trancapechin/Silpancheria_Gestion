@@ -55,7 +55,7 @@ body {
 /* ---------- SIDEBAR ---------- */
 .sidebar {
     width: var(--sidebar-width);
-    min-height: 100vh;
+    height: 100vh;
     background: var(--sidebar);
     color: var(--text-sidebar);
     position: fixed;
@@ -869,3 +869,125 @@ textarea.form-control {
         bottom: 90px;
     }
 }
+/* ===== MODO OSCURO (misma paleta, solo adaptada) ===== */
+[data-tema="dark"] {
+    --bg: #0B1220;
+    --card: #111C33;
+    --border: #1E2A44;
+    --text: #E2E8F0;
+    --text-muted: #94A3B8;
+    --success-bg: rgba(34, 197, 94, 0.15);
+    --warning-bg: rgba(234, 179, 8, 0.15);
+    --danger-bg: rgba(239, 68, 68, 0.15);
+    --info-bg: rgba(59, 130, 246, 0.15);
+    --primary-soft: rgba(249, 115, 22, 0.18);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+    /* Formularios */
+    [data-tema="dark"] .form-control,
+    [data-tema="dark"] .form-select {
+        background-color: #0B1220 !important;
+        color: #F1F5F9 !important;
+        border-color: #2A3A5C !important;
+    }
+
+        [data-tema="dark"] .form-control::placeholder {
+            color: #64748B;
+        }
+
+    [data-tema="dark"] .topbar-search input:focus {
+        background: var(--card);
+    }
+
+    /* Botones */
+    [data-tema="dark"] .btn-secondary-app,
+    [data-tema="dark"] .btn-action,
+    [data-tema="dark"] .sidebar-toggle {
+        background: #16233D !important;
+        color: #E2E8F0 !important;
+        border-color: #2A3A5C !important;
+    }
+
+        [data-tema="dark"] .btn-secondary-app:hover {
+            background: #1E2A44 !important;
+        }
+
+        [data-tema="dark"] .btn-action.edit {
+            color: var(--primary) !important;
+        }
+
+        [data-tema="dark"] .btn-action.delete {
+            color: #F87171 !important;
+        }
+
+    /* Tablas */
+    [data-tema="dark"] .table-app {
+        --bs-table-hover-bg: #16233D;
+        --bs-table-color: #E2E8F0;
+    }
+
+        [data-tema="dark"] .table-app thead th {
+            background: #16233D !important;
+            color: #CBD5E1 !important;
+        }
+
+        [data-tema="dark"] .table-app tbody td {
+            border-bottom-color: #1E2A44 !important;
+            color: #E2E8F0;
+        }
+
+    /* Topbar */
+    [data-tema="dark"] .btn-icon .badge-dot {
+        border-color: var(--card);
+    }
+
+    /* Badges: mismo color de estado pero más claro para que se lea */
+    [data-tema="dark"] .badge-activo,
+    [data-tema="dark"] .badge-confirmada,
+    [data-tema="dark"] .badge-completado,
+    [data-tema="dark"] .badge-pagada {
+        color: #4ADE80;
+    }
+
+    [data-tema="dark"] .badge-bajo,
+    [data-tema="dark"] .badge-pendiente {
+        color: #FACC15;
+    }
+
+    [data-tema="dark"] .badge-agotado {
+        color: #F87171;
+    }
+
+    [data-tema="dark"] .badge-inactivo {
+        background: #1E2A44;
+        color: #94A3B8;
+    }
+
+    [data-tema="dark"] .badge-tipo {
+        color: #93C5FD;
+    }
+
+        [data-tema="dark"] .badge-tipo.plato {
+            background: rgba(168, 85, 247, 0.18);
+            color: #C4B5FD;
+        }
+
+        [data-tema="dark"] .badge-tipo.bebida {
+            background: rgba(14, 165, 233, 0.18);
+            color: #7DD3FC;
+        }
+
+    /* Iconos de las tarjetas KPI */
+    [data-tema="dark"] .kpi-icon.yellow {
+        color: #FACC15;
+    }
+
+    [data-tema="dark"] .kpi-icon.green {
+        color: #4ADE80;
+    }
+
+    [data-tema="dark"] .kpi-icon.red {
+        color: #F87171;
+    }

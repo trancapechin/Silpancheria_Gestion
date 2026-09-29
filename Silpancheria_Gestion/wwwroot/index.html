@@ -113,10 +113,14 @@
                             <i class="bi bi-chevron-down text-muted" style="font-size:0.7rem"></i>
                         </div>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:10px;min-width:180px">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mi perfil</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="cambiarModulo('perfil')"><i class="bi bi-person me-2"></i>Mi perfil</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Configuración</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="cerrarSesion && cerrarSesion()"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="cerrarSesionApp()" style="color:#ff6b6b;">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -874,7 +878,47 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- ========== MI PERFIL ========== -->
+                <div id="modulo-perfil" class="modulo-seccion">
+                    <div class="page-header">
+                        <div>
+                            <h1><i class="bi bi-person-circle text-primary me-2"></i>Mi Perfil</h1>
+                            <p>Actualiza tu usuario o contraseña</p>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="card-app">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="bi bi-shield-lock"></i> Datos de acceso</h5>
+                                    <form id="formPerfil" onsubmit="guardarPerfil(event)">
+                                        <div class="mb-3">
+                                            <label class="form-label">Usuario actual</label>
+                                            <input type="text" id="perfilUsernameActual" class="form-control" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Nuevo usuario</label>
+                                            <input type="text" id="perfilNuevoUsername" class="form-control" placeholder="Déjalo vacío para no cambiarlo">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Nueva contraseña</label>
+                                            <input type="password" id="perfilNuevaPassword" class="form-control" placeholder="Déjalo vacío para no cambiarla">
+                                        </div>
+                                        <hr>
+                                        <div class="mb-3">
+                                            <label class="form-label">Contraseña actual *</label>
+                                            <input type="password" id="perfilPasswordActual" class="form-control" required placeholder="Requerida para guardar cualquier cambio">
+                                        </div>
+                                        <div id="perfilMensaje" class="mb-3" style="font-size:0.85rem;display:none;"></div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary-app"><i class="bi bi-check-lg me-1"></i> Guardar cambios</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- ========== REPORTES ========== -->
                 <div id="modulo-reportes" class="modulo-seccion">
                     <div class="page-header">
@@ -950,6 +994,91 @@
     <script src="api.js"></script>
     <script src="js/asistente.js"></script>
     <script>
+(async function verificarSesion() {
+    try {
+        const resp = await fetch('/api/Auth/me');
+        if (!resp.ok) {
+            window.location.href = '/login.html';
+            return;
+        }
+        const datos = await resp.json();
+        window.usuarioActual = datos;
+        document.addEventListener('DOMContentLoaded', () => {
+            const nombreEl = document.querySelector('.user-info .name');
+            const avatarEl = document.querySelector('.user-avatar');
+            const texto = datos.nombre || datos.username;
+            if (nombreEl) nombreEl.textContent = texto;
+            if (avatarEl) avatarEl.textContent = texto.charAt(0).toUpperCase();
+        });
+    } catch (e) {
+        window.location.href = '/login.html';
+    }
+})();
+
+async function cerrarSesionApp() {
+    try {
+        await fetch('/api/Auth/logout', { method: 'POST' });
+    } catch (e) {
+        // aunque falle el servidor, igual cerramos local
+    }
+    localStorage.clear();               // limpia tema y cualquier dato local
+    window.usuarioActual = null;
+    window.location.href = '/login.html';
+}
+function cargarDatosPerfil() {
+    const input = document.getElementById('perfilUsernameActual');
+    if (input && window.usuarioActual) input.value = window.usuarioActual.username;
+    const form = document.getElementById('formPerfil');
+    if (form) form.reset();
+    if (input && window.usuarioActual) input.value = window.usuarioActual.username;
+    const msj = document.getElementById('perfilMensaje');
+    if (msj) msj.style.display = 'none';
+}
+
+async function guardarPerfil(event) {
+    event.preventDefault();
+    const msj = document.getElementById('perfilMensaje');
+    msj.style.display = 'none';
+
+    const body = {
+        nuevoUsername: document.getElementById('perfilNuevoUsername').value.trim() || null,
+        nuevaPassword: document.getElementById('perfilNuevaPassword').value || null,
+        passwordActual: document.getElementById('perfilPasswordActual').value
+    };
+
+    try {
+        const resp = await fetch('/api/Auth/perfil', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const datos = await resp.json();
+
+        if (!resp.ok) {
+            msj.className = 'text-danger mb-3';
+            msj.textContent = datos.mensaje || 'No se pudo actualizar el perfil';
+            msj.style.display = 'block';
+            return;
+        }
+
+        msj.className = 'text-success mb-3';
+        msj.textContent = 'Perfil actualizado correctamente';
+        msj.style.display = 'block';
+
+        window.usuarioActual.username = datos.username;
+        document.getElementById('perfilUsernameActual').value = datos.username;
+        document.querySelector('.user-info .name').textContent = datos.username;
+        document.querySelector('.user-avatar').textContent = datos.username.charAt(0).toUpperCase();
+
+        document.getElementById('perfilNuevoUsername').value = '';
+        document.getElementById('perfilNuevaPassword').value = '';
+        document.getElementById('perfilPasswordActual').value = '';
+    } catch (e) {
+        msj.className = 'text-danger mb-3';
+        msj.textContent = 'Error de conexión con el servidor';
+        msj.style.display = 'block';
+    }
+}
 function colorTextoGrafico() {
     return getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
 }
@@ -1004,6 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 else if (typeof cargarMovimientosStock === 'function') cargarMovimientosStock();
                                             }
                                             if (nombreModulo === 'reportes' && typeof cargarVistaPreviaReporte === 'function') cargarVistaPreviaReporte();
+                                            if (nombreModulo === 'perfil') cargarDatosPerfil();
                                         }
 
                                         async function cargarDashboard() {
@@ -1189,7 +1319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             #btnAsistenteVoz {
                 bottom: 16px;
                 right: 12px;
-                width: 56px<header class="topbar">
+                width: 56px;
                 height: 56px;
                 padding: 0;
                 justify-content: center;

@@ -53,6 +53,24 @@ var app = builder.Build();
 var supabase = app.Services.GetRequiredService<SupabaseService>();
 await supabase.Inicializar();
 
+// --- Crear usuario administrador si no existe ninguno ---
+using (var scope = app.Services.CreateScope())
+{
+    var respuesta = await supabase.Cliente.From<SilpanchariaApp.Models.Usuario>().Get();
+    if (!respuesta.Models.Any())
+    {
+        var admin = new SilpanchariaApp.Models.Usuario
+        {
+            Username = "admin",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Nombre = "Administrador",
+            Estado = "ACTIVO"
+        };
+        await supabase.Cliente.From<SilpanchariaApp.Models.Usuario>().Insert(admin);
+        Console.WriteLine("Usuario admin creado. Usuario: admin / Contraseña: admin123");
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
